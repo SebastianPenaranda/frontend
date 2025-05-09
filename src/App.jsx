@@ -1447,7 +1447,7 @@ const App = () => {
             <h1 className="pance">Sede Pance</h1>
             <p>Seleccione una opción:</p>
             <button onClick={() => setMenu("login")}>Iniciar Sesión</button>
-            <button onClick={() => setMenu("register")}>Registrarse</button>
+            
           </div>
         )}
 
