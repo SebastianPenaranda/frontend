@@ -1429,8 +1429,7 @@ const App = () => {
     }
     setTipoExportacionPersonas(null);
   };
-  
-  //<button onClick={() => setMenu("register")}>Registrarse</button>
+
   return (
     <div className="app-container">
       {loggedIn && <Header className="app-header"/>}
@@ -1445,10 +1444,10 @@ const App = () => {
         {menu === "inicio" && !loggedIn && (
           <div className="contenedor_bienvenida">
             <h1>Bienvenido al registro de personas de Unicatolica</h1>
-            <h1 className="pance">Sede Pance</h1><br />
-            <p></p>
+            <h1 className="pance">Sede Pance</h1>
+            <p>Seleccione una opción:</p>
             <button onClick={() => setMenu("login")}>Iniciar Sesión</button>
-            
+            <button onClick={() => setMenu("register")}>Registrarse</button>
           </div>
         )}
 
