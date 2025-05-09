@@ -512,18 +512,8 @@ select option {
 /* Removed empty ruleset for .contenedor_admin */
 
 .panelAdministradorCuadro {
+  height: 350px;
   width: 500px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-  background: var(--container-color);
-}
-
-.panelRegistroCuadro {
-  width: 700px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -532,7 +522,20 @@ select option {
   padding: 2rem;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
-  max-width: 100%;
+  background: var(--container-color);
+}
+
+.panelRegistroCuadro {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  max-width: 500px;
   margin: 4rem auto;
   background: var(--container-color);
 }
@@ -898,7 +901,7 @@ select option {
 .contenedor_lector {
   margin: 4rem 0;
   width: 100%;
-  max-width: 800px;
+  max-width: 600px;
   background-color: white;
   padding: 30px;
   border-radius: 15px;
@@ -924,13 +927,13 @@ select option {
 .lector-busqueda-input {
   width: 100%;
   padding: 12px 15px;
-  padding-left: 20px;
+  padding-left: 40px;
   border-radius: 8px;
   border: 2px solid #e9ecef;
   font-size: 15px;
   color: #495057;
   transition: all 0.3s ease;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.2em;
   flex: 1;
 }
 .lector-busqueda-icon {
@@ -950,42 +953,49 @@ select option {
   text-align: center;
 }
 .lector-persona-info {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  background-color: #f8f9fa;
   padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+.lector-persona-titulo {
+  font-size: 20px;
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-weight: 600;
 }
 .lector-persona-grid {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
+  display: grid;
+  gap: 10px;
 }
-.lector-persona-datos {
-  flex: 1;
+.lector-persona-row {
   display: flex;
-  flex-direction: column;
   gap: 10px;
 }
 .lector-persona-img {
-  flex-shrink: 0;
-  margin: 0;
-  width: 200px;
+  margin-top: 15px;
+  text-align: center;
 }
 .lector-persona-img img {
-  width: 100%;
-  height: auto;
+  max-width: 200px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-@media screen and (max-width: 768px) {
-  .lector-persona-grid {
-    flex-direction: column;
-  }
-  
-  .lector-persona-img {
-    width: 150px;
-    margin: 0 auto;
-  }
+.lector-logout-btn {
+  display: block;
+  margin: 0 auto;
+  padding: 12px 25px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+.lector-logout-btn:hover {
+  background-color: #c82333;
 }
 
 /* ================= MODAL CONFIRMACION =================== */
@@ -1160,8 +1170,6 @@ select option {
 
 /* Estilos para el formulario de registro */
 .form-section {
-  width: 600px;
-  max-width: 100%;
   margin-bottom: 2rem;
   padding: 1.5rem;
   background: rgba(255, 255, 255, 0.05);
@@ -1187,7 +1195,7 @@ select option {
 
 .form-section input,
 .form-section select {
-  max-width: 100%;
+  width: 100%;
   padding: 0.75rem;
   margin-bottom: 1rem;
   border: 2px solid rgba(0, 0, 0, 0.1);

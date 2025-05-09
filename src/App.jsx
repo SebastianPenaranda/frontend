@@ -125,11 +125,7 @@ const App = () => {
     correoPersonal: "", 
     correoInstitucional: "", 
     password: "", 
-    role: "lector",
-    dependencia: "",
-    cargo: "",
-    telefonoInterno: "",
-    turnoLaboral: ""
+    role: "lector" 
   });
   const [loggedIn, setLoggedIn] = useState(false);
   const [role, setRole] = useState(null);
@@ -255,38 +251,6 @@ const App = () => {
   const [personasFiltros, setPersonasFiltros] = useState({ nombre: '', apellido: '', cedula: '', idInstitucional: '', rolUniversidad: '', carrera: '', correoInstitucional: '' });
   const [personasLoading, setPersonasLoading] = useState(false);
   const [tipoExportacionPersonas, setTipoExportacionPersonas] = useState(null);
-
-  const [servidorCaido, setServidorCaido] = useState(false);
-
-  // Estados para recuperación de contraseña
-  const [mostrarRecuperar, setMostrarRecuperar] = useState(false);
-  const [mostrarReset, setMostrarReset] = useState(false);
-  const [correoRecuperar, setCorreoRecuperar] = useState("");
-  const [tokenReset, setTokenReset] = useState("");
-  const [nuevaPassword, setNuevaPassword] = useState("");
-  const [mensajeRecuperar, setMensajeRecuperar] = useState("");
-  const [mensajeReset, setMensajeReset] = useState("");
-
-  // Interceptor global de Axios para manejar errores de red
-  useEffect(() => {
-    const interceptor = axios.interceptors.response.use(
-      response => {
-        if (servidorCaido) setServidorCaido(false);
-        return response;
-      },
-      error => {
-        if (
-          error.code === "ERR_NETWORK" ||
-          error.message === "Network Error" ||
-          error.response === undefined
-        ) {
-          setServidorCaido(true);
-        }
-        return Promise.reject(error);
-      }
-    );
-    return () => axios.interceptors.response.eject(interceptor);
-  }, [servidorCaido]);
 
   useEffect(() => {
     if (role === "lector") {
@@ -537,7 +501,7 @@ const App = () => {
 
   const register = async () => {
     try {
-      await axios.post("https://backend-coral-theta-21.vercel.app/api/register", user);
+      await axios.post("https://app-back-delta.vercel.app/api/register", user);
       toast.success("Usuario registrado");
       setUser({ 
         nombre: "", 
@@ -549,11 +513,7 @@ const App = () => {
         correoPersonal: "", 
         correoInstitucional: "", 
         password: "", 
-        role: "lector",
-        dependencia: "",
-        cargo: "",
-        telefonoInterno: "",
-        turnoLaboral: ""
+        role: "lector" 
       });
       handleMenuChange("inicio");
     } catch {
@@ -563,15 +523,25 @@ const App = () => {
 
   const login = async () => {
     try {
-      if (!user.correoInstitucional || !user.password || !user.role) {
-        toast.error("Por favor complete todos los campos");
-        return;
-      }
-      const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/login", {
+      console.log("Intentando login con:", {
         correoInstitucional: user.correoInstitucional,
         password: user.password,
         role: user.role
       });
+      
+      if (!user.correoInstitucional || !user.password || !user.role) {
+        toast.error("Por favor complete todos los campos");
+        return;
+      }
+
+      const response = await axios.post("https://app-back-delta.vercel.app/api/login", {
+        correoInstitucional: user.correoInstitucional,
+        password: user.password,
+        role: user.role
+      });
+      
+      console.log("Respuesta del servidor:", response.data);
+      
       if (response.data) {
         setLoggedIn(true);
         setRole(response.data.role);
@@ -581,6 +551,7 @@ const App = () => {
         }
       }
     } catch (error) {
+      console.error("Error en login:", error.response?.data || error);
       toast.error(error.response?.data?.error || "Error en el inicio de sesión");
     }
   };
@@ -599,11 +570,7 @@ const App = () => {
       correoPersonal: "", 
       correoInstitucional: "", 
       password: "", 
-      role: "lector",
-      dependencia: "",
-      cargo: "",
-      telefonoInterno: "",
-      turnoLaboral: ""
+      role: "lector" 
     });
     setFormData({ 
       nombre: "", 
@@ -744,7 +711,7 @@ const App = () => {
         formDataToSend.append('imagen', formData.imagen);
       }
   
-      const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/save", formDataToSend, {
+      const response = await axios.post("https://app-back-delta.vercel.app/api/save", formDataToSend, {
         headers: { "Content-Type": "multipart/form-data" },
       });
   
@@ -776,13 +743,14 @@ const App = () => {
           setImagePreview(null);
       }
     } catch (error) {
+      console.error("Error al guardar:", error);
       toast.error(error.response?.data?.error || "Error al guardar los datos");
     }
   };
 
   const fetchHuellas = async () => {
     try {
-      const response = await axios.get("https://backend-coral-theta-21.vercel.app/api/huellas");
+      const response = await axios.get("https://app-back-delta.vercel.app/api/huellas");
       setHuellas(response.data);
     } catch {
       toast.error("Error al obtener los datos");
@@ -807,7 +775,7 @@ const App = () => {
       setRegistroEliminado(registro);
       
       // Luego eliminamos
-      await axios.delete(`https://backend-coral-theta-21.vercel.app/api/huellas/${registroAEliminar}`);
+      await axios.delete(`https://app-back-delta.vercel.app/api/huellas/${registroAEliminar}`);
       
       toast(
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '10px' }}>
@@ -855,6 +823,7 @@ const App = () => {
       fetchHuellas();
       setRegistroDetalle(null); // Volver a la vista general después de eliminar
     } catch (error) {
+      console.error("Error al eliminar:", error);
       toast.error("Error al eliminar el registro");
     } finally {
       setMostrarModalConfirmacion(false);
@@ -891,7 +860,7 @@ const App = () => {
       if (registro.imagen) {
         try {
           console.log("Obteniendo imagen del servidor:", registro.imagen);
-          const response = await fetch(`https://backend-coral-theta-21.vercel.app/api${registro.imagen}`);
+          const response = await fetch(`https://app-back-seven.vercel.app${registro.imagen}`);
           const blob = await response.blob();
           const file = new File([blob], 'imagen.jpg', { type: 'image/jpeg' });
           formDataToSend.append('imagen', file);
@@ -902,7 +871,7 @@ const App = () => {
       }
       
       console.log("Enviando datos al servidor...");
-      const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/save", formDataToSend, {
+      const response = await axios.post("https://app-back-delta.vercel.app/api/save", formDataToSend, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       
@@ -924,6 +893,7 @@ const App = () => {
         toast.dismiss(); // Cerrar el toast anterior
       }
     } catch (error) {
+      console.error("Error al restaurar:", error);
       toast.error("Error al restaurar el registro", {
         position: "top-right",
         autoClose: 5000,
@@ -973,7 +943,7 @@ const App = () => {
         formDataToSend.append("imagen", formData.imagen);
       }
     
-      const response = await axios.put(`https://backend-coral-theta-21.vercel.app/api/huellas/${registroEditando._id}`, formDataToSend, {
+      const response = await axios.put(`https://app-back-delta.vercel.app/api/huellas/${registroEditando._id}`, formDataToSend, {
         headers: { "Content-Type": "multipart/form-data" },
       });
     
@@ -1037,6 +1007,7 @@ const App = () => {
         fetchHuellas();
       }
     } catch (error) {
+      console.error("Error al actualizar:", error);
       toast.error("Error al actualizar el registro");
     }
   };
@@ -1110,14 +1081,14 @@ const App = () => {
         return;
       }
 
-      const response = await axios.get(`https://backend-coral-theta-21.vercel.app/api/buscar-carnet/${busquedaCarnet}`);
+      const response = await axios.get(`https://app-back-delta.vercel.app/api/buscar-carnet/${busquedaCarnet}`);
       
       if (response.data.persona) {
         setPersonaEncontrada(response.data.persona);
         setMensajeError("");
         // Llamar a registrar-acceso automáticamente
         try {
-          const accesoResp = await axios.post("https://backend-coral-theta-21.vercel.app/api/registrar-acceso", {
+          const accesoResp = await axios.post("https://app-back-delta.vercel.app/api/registrar-acceso", {
             carnet: busquedaCarnet
           });
           setTipoAcceso(accesoResp.data.tipo);
@@ -1143,6 +1114,7 @@ const App = () => {
       }
       setBusquedaCarnet("");
     } catch (error) {
+      console.error("Error al buscar:", error);
       setPersonaEncontrada(null);
       setUltimoAcceso(null);
       setTipoAcceso(null);
@@ -1161,7 +1133,7 @@ const App = () => {
         return;
       }
 
-      const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/registrar-visitante", visitanteForm);
+      const response = await axios.post("https://app-back-delta.vercel.app/api/registrar-visitante", visitanteForm);
       toast.success("Visitante registrado exitosamente");
       setVisitanteForm({
         nombre: "",
@@ -1171,6 +1143,7 @@ const App = () => {
         numeroTarjeta: ""
       });
     } catch (error) {
+      console.error("Error al registrar visitante:", error);
       toast.error("Error al registrar visitante");
     }
   };
@@ -1203,7 +1176,7 @@ const App = () => {
         limit: accesosLimit,
         ...accesosFiltros
       };
-      const res = await axios.get("https://backend-coral-theta-21.vercel.app/api/accesos", { params });
+      const res = await axios.get("https://app-back-delta.vercel.app/api/accesos", { params });
       setAccesos(res.data.accesos);
       setAccesosTotal(res.data.total);
     } catch (error) {
@@ -1224,7 +1197,7 @@ const App = () => {
     setExportando(true);
     try {
       const params = { ...accesosFiltros, page: 1, limit: 10000 };
-      const res = await axios.get("https://backend-coral-theta-21.vercel.app/api/accesos", { params });
+      const res = await axios.get("https://app-back-delta.vercel.app/api/accesos", { params });
       return res.data.accesos;
     } catch {
       toast.error("Error al obtener todos los accesos");
@@ -1308,7 +1281,7 @@ const App = () => {
     setPersonasLoading(true);
     try {
       const params = { ...personasFiltros, page: personasPage, limit: personasLimit };
-      const res = await axios.get("https://backend-coral-theta-21.vercel.app/api/personas", { params });
+      const res = await axios.get("https://app-back-delta.vercel.app/api/personas", { params });
       setPersonas(res.data.personas);
       setPersonasTotal(res.data.total);
     } catch (error) {
@@ -1330,7 +1303,7 @@ const App = () => {
     setExportando(true);
     try {
       const params = { ...personasFiltros, page: 1, limit: 10000 };
-      const res = await axios.get("https://backend-coral-theta-21.vercel.app/api/personas", { params });
+      const res = await axios.get("https://app-back-delta.vercel.app/api/personas", { params });
       return res.data.personas;
     } catch {
       toast.error("Error al obtener todas las personas");
@@ -1457,51 +1430,10 @@ const App = () => {
     setTipoExportacionPersonas(null);
   };
 
-  // Handler para solicitar recuperación
-  const handleRecuperarPassword = async () => {
-    setMensajeRecuperar("");
-    if (!correoRecuperar) {
-      setMensajeRecuperar("Por favor ingresa tu correo institucional.");
-      return;
-    }
-    try {
-      await axios.post("https://backend-coral-theta-21.vercel.app/api/recuperar-password", { correoInstitucional: correoRecuperar });
-      setMensajeRecuperar("Si el correo existe, recibirás un mensaje con instrucciones para restablecer tu contraseña.");
-    } catch (error) {
-      setMensajeRecuperar(error.response?.data?.error || "Error al solicitar recuperación.");
-    }
-  };
-
-  // Handler para restablecer contraseña
-  const handleResetPassword = async () => {
-    setMensajeReset("");
-    if (!correoRecuperar || !tokenReset || !nuevaPassword) {
-      setMensajeReset("Completa todos los campos.");
-      return;
-    }
-    try {
-      await axios.post("https://backend-coral-theta-21.vercel.app/api/reset-password", {
-        correoInstitucional: correoRecuperar,
-        token: tokenReset,
-        nuevaPassword
-      });
-      setMensajeReset("Contraseña restablecida correctamente. Ya puedes iniciar sesión.");
-      setMostrarReset(false);
-      setMostrarRecuperar(false);
-      setCorreoRecuperar("");
-      setTokenReset("");
-      setNuevaPassword("");
-    } catch (error) {
-      setMensajeReset(error.response?.data?.error || "Error al restablecer la contraseña.");
-    }
-  };
-
   return (
     <div className="app-container">
-      
       {loggedIn && <Header className="app-header"/>}
       <div className={`app-content ${!loggedIn ? 'no-header' : ''}`}>
-
         <ToastContainer 
           position={loggedIn ? "top-right" : "top-right"}
           style={{
@@ -1515,6 +1447,7 @@ const App = () => {
             <h1 className="pance">Sede Pance</h1>
             <p>Seleccione una opción:</p>
             <button onClick={() => setMenu("login")}>Iniciar Sesión</button>
+            <button onClick={() => setMenu("register")}>Registrarse</button>
           </div>
         )}
 
@@ -1550,7 +1483,7 @@ const App = () => {
           </div>
         )}
 
-        {menu === "login" && !loggedIn && !mostrarRecuperar && !mostrarReset && (
+        {menu === "login" && !loggedIn && (
           <div className="contenedor_login">
             <h1>Iniciar Sesión</h1>
             <label>Correo Institucional:</label>
@@ -1569,46 +1502,6 @@ const App = () => {
             </select><br />
             <button onClick={login}>Entrar</button>
             <button onClick={() => handleMenuChange("inicio")}>Volver</button>
-            <div style={{ marginTop: '1rem' }}>
-              <button style={{ background: 'none', color: '#4147bd', textDecoration: 'underline', boxShadow: 'none', padding: 0 }}
-                onClick={() => setMostrarRecuperar(true)}>
-                ¿Olvidaste tu contraseña?
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Formulario para solicitar recuperación */}
-        {mostrarRecuperar && !mostrarReset && (
-          <div className="contenedor_login">
-            <h1>Recuperar Contraseña</h1>
-            <label>Correo Institucional:</label>
-            <input type="email" placeholder="Ingrese su correo institucional" value={correoRecuperar} onChange={e => setCorreoRecuperar(e.target.value)} /><br />
-            <button onClick={handleRecuperarPassword}>Solicitar recuperación</button>
-            <button onClick={() => { setMostrarRecuperar(false); setMensajeRecuperar(""); }}>Volver</button>
-            <div style={{ marginTop: '1rem', color: mensajeRecuperar.includes('correctamente') ? 'green' : 'red' }}>{mensajeRecuperar}</div>
-            <div style={{ marginTop: '1rem' }}>
-              <button style={{ background: 'none', color: '#4147bd', textDecoration: 'underline', boxShadow: 'none', padding: 0 }}
-                onClick={() => setMostrarReset(true)}>
-                ¿Ya tienes el token? Restablecer contraseña
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Formulario para restablecer contraseña */}
-        {mostrarReset && (
-          <div className="contenedor_login">
-            <h1>Restablecer Contraseña</h1>
-            <label>Correo Institucional:</label>
-            <input type="email" placeholder="Ingrese su correo institucional" value={correoRecuperar} onChange={e => setCorreoRecuperar(e.target.value)} /><br />
-            <label>Token recibido:</label>
-            <input type="text" placeholder="Ingrese el token recibido por correo" value={tokenReset} onChange={e => setTokenReset(e.target.value)} /><br />
-            <label>Nueva Contraseña:</label>
-            <input type="password" placeholder="Ingrese la nueva contraseña" value={nuevaPassword} onChange={e => setNuevaPassword(e.target.value)} /><br />
-            <button onClick={handleResetPassword}>Restablecer</button>
-            <button onClick={() => { setMostrarReset(false); setMensajeReset(""); }}>Volver</button>
-            <div style={{ marginTop: '1rem', color: mensajeReset.includes('correctamente') ? 'green' : 'red' }}>{mensajeReset}</div>
           </div>
         )}
 
@@ -1619,7 +1512,6 @@ const App = () => {
               <div className="panelAdministradorCuadro">
                   <h1>Panel de Administrador</h1>
                   <div className="admin-menu-btns">
-                    <button onClick={() => setAdminView("nuevo_usuario")}>Registrar Nuevo Usuario</button>
                     <button onClick={() => setAdminView("registro")}>Registro de Personas</button>
                     <button onClick={() => {
                       setAdminView("ver_registros");
@@ -1973,89 +1865,6 @@ const App = () => {
               </>
             )}
 
-            {adminView === "nuevo_usuario" && role === "admin" && (
-              <div className="panelRegistroCuadro">
-                <h1>Registrar Nuevo Usuario</h1>
-                <div className="admin-form">
-                  <div className="form-section">
-                    <h2>Información Personal</h2>
-                    <label>Nombre:</label>
-                    <input type="text" name="nombre" placeholder="Ingrese el nombre" value={user.nombre} onChange={handleAuthChange} required /><br />
-                    <label>Apellido:</label>
-                    <input type="text" name="apellido" placeholder="Ingrese el apellido" value={user.apellido} onChange={handleAuthChange} required /><br />
-                    <label>Fecha de Nacimiento:</label>
-                    <input type="date" name="fechaNacimiento" value={user.fechaNacimiento} onChange={handleAuthChange} required /><br />
-                    <label>ID Institucional:</label>
-                    <input type="text" name="idInstitucional" placeholder="Ingrese el ID institucional" value={user.idInstitucional} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" required /><br />
-                    <label>Cédula:</label>
-                    <input type="text" name="cedula" placeholder="Ingrese el número de cédula" value={user.cedula} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" required /><br />
-                    <label>Rol en la Universidad:</label>
-                    <select name="rolUniversidad" value={user.rolUniversidad} onChange={handleAuthChange} required>
-                      <option value="">Seleccione un rol</option>
-                      <option value="Personal Administrativo">Personal Administrativo</option>
-                      <option value="Profesor / Docente">Profesor / Docente</option>
-                      <option value="Seguridad">Seguridad</option>
-                    </select><br />
-                    {/* Campos adicionales para Personal Administrativo */}
-                    {user.rolUniversidad === 'Personal Administrativo' && (
-                      <>
-                        <label>Dependencia:</label>
-                        <select name="dependencia" value={user.dependencia || ''} onChange={handleAuthChange} required>
-                          <option value="">Seleccione una dependencia</option>
-                          {DEPENDENCIAS.map(dep => (
-                            <option key={dep} value={dep}>{dep}</option>
-                          ))}
-                        </select><br />
-                        <label>Cargo / Título del Puesto:</label>
-                        <input type="text" name="cargo" placeholder="Ingrese el cargo" value={user.cargo || ''} onChange={handleAuthChange} required /><br />
-                        <label>Teléfono Interno:</label>
-                        <input type="text" name="telefonoInterno" placeholder="Ingrese el teléfono interno" value={user.telefonoInterno || ''} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" required /><br />
-                        <label>Turno Laboral:</label>
-                        <select name="turnoLaboral" value={user.turnoLaboral || ''} onChange={handleAuthChange} required>
-                          <option value="">Seleccione un turno</option>
-                          <option value="Mañana">Mañana</option>
-                          <option value="Tarde">Tarde</option>
-                          <option value="Jornada completa">Jornada completa</option>
-                        </select><br />
-                      </>
-                    )}
-                    <label>Correo Personal:</label>
-                    <input type="email" name="correoPersonal" placeholder="Ingrese el correo personal" value={user.correoPersonal} onChange={handleAuthChange} required /><br />
-                    <label>Correo Institucional:</label>
-                    <input type="email" name="correoInstitucional" placeholder="Ingrese el correo institucional" value={user.correoInstitucional} onChange={handleAuthChange} required /><br />
-                    <label>Contraseña:</label>
-                    <input type="password" name="password" placeholder="Ingrese la contraseña" value={user.password} onChange={handleAuthChange} required /><br />
-                    <label>Rol en la Aplicación:</label>
-                    <select name="role" value={user.role} onChange={handleAuthChange} required>
-                      <option value="admin">Administrador</option>
-                      <option value="lector">Lector</option>
-                    </select><br />
-                  </div>
-                  <div className="form-buttons">
-                    <button onClick={register}>Registrar Usuario</button>
-                    <button onClick={() => {
-                      setUser({
-                        nombre: "",
-                        apellido: "",
-                        fechaNacimiento: "",
-                        idInstitucional: "",
-                        cedula: "",
-                        rolUniversidad: "",
-                        correoPersonal: "",
-                        correoInstitucional: "",
-                        password: "",
-                        role: "lector",
-                        dependencia: "",
-                        cargo: "",
-                        telefonoInterno: "",
-                        turnoLaboral: ""
-                      });
-                      setAdminView("menu");
-                    }}>Volver</button>
-                  </div>
-                </div>
-              </div>
-            )}
 
               {adminView === "ver_registros" && !registroDetalle && (
                 <>
@@ -2192,7 +2001,7 @@ const App = () => {
                               {huella.imagen && (
                                 <div className="admin-card-img">
                                   <img 
-                                    src={`https://backend-coral-theta-21.vercel.app/api/huellas/${huella._id}/imagen?${Date.now()}`} 
+                                    src={`https://app-back-delta.vercel.app/api/huellas/${huella._id}/imagen`} 
                                     alt="Imagen de perfil"
                                   />
                                 </div>
@@ -2251,7 +2060,7 @@ const App = () => {
                         <div key={key} className="detalle-persona-row">
                           <strong className="detalle-campo-label">{formatearCampo(key)}:</strong> 
                           {key === 'imagen' && value ? (
-                            <img src={`https://backend-coral-theta-21.vercel.app/api/huellas/${registroDetalle._id}/imagen?${Date.now()}`} alt="Imagen de la persona" style={{maxWidth: '180px', maxHeight: '180px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', marginLeft: '10px'}} />
+                            <img src={`https://app-back-delta.vercel.app/api/huellas/${registroDetalle._id}/imagen`} alt="Imagen de la persona" style={{maxWidth: '180px', maxHeight: '180px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', marginLeft: '10px'}} />
                           ) : (
                             <span className="detalle-campo-valor">{value || '-'}</span>
                           )}
@@ -2286,7 +2095,7 @@ const App = () => {
                   placeholder="Escanee el carnet"
                   className="lector-busqueda-input"
                 />
-                <div className="lector-busqueda-icon"></div>
+                <div className="lector-busqueda-icon">🔍</div>
                 <button 
                   onClick={() => setShowVisitanteForm(true)}
                   className="visitante-btn"
@@ -2303,38 +2112,36 @@ const App = () => {
                 <div className="lector-persona-info">
                   <h2 className="lector-persona-titulo">Información de la Persona</h2>
                   <div className="lector-persona-grid">
-                    <div className="lector-persona-datos">
-                      <div className="lector-persona-row">
-                        <strong>Nombre:</strong>
-                        <span>{personaEncontrada.nombre} {personaEncontrada.apellido}</span>
-                      </div>
-                      <div className="lector-persona-row">
-                        <strong>ID Institucional:</strong>
-                        <span>{personaEncontrada.idInstitucional}</span>
-                      </div>
-                      <div className="lector-persona-row">
-                        <strong>Rol:</strong>
-                        <span className={`rol-badge rol-${normalizarRolClase(personaEncontrada.rolUniversidad)}`}>
-                          {personaEncontrada.rolUniversidad}
-                        </span>
-                      </div>
-                      {ultimoAcceso && (
-                        <>
-                          <div className="lector-persona-row">
-                            <strong>Hora de entrada:</strong>
-                            <span>{ultimoAcceso.horaEntrada || '-'}</span>
-                          </div>
-                          <div className="lector-persona-row">
-                            <strong>Hora de salida:</strong>
-                            <span>{ultimoAcceso.horaSalida || '-'}</span>
-                          </div>
-                        </>
-                      )}
+                    <div className="lector-persona-row">
+                      <strong>Nombre:</strong>
+                      <span>{personaEncontrada.nombre} {personaEncontrada.apellido}</span>
                     </div>
+                    <div className="lector-persona-row">
+                      <strong>ID Institucional:</strong>
+                      <span>{personaEncontrada.idInstitucional}</span>
+                    </div>
+                    <div className="lector-persona-row">
+                      <strong>Rol:</strong>
+                      <span className={`rol-badge rol-${normalizarRolClase(personaEncontrada.rolUniversidad)}`}>
+                        {personaEncontrada.rolUniversidad}
+                      </span>
+                    </div>
+                    {ultimoAcceso && (
+                      <>
+                        <div className="lector-persona-row">
+                          <strong>Hora de entrada:</strong>
+                          <span>{ultimoAcceso.horaEntrada || '-'}</span>
+                        </div>
+                        <div className="lector-persona-row">
+                          <strong>Hora de salida:</strong>
+                          <span>{ultimoAcceso.horaSalida || '-'}</span>
+                        </div>
+                      </>
+                    )}
                     {personaEncontrada.imagen && (
                       <div className="lector-persona-img">
                         <img
-                          src={`https://backend-coral-theta-21.vercel.app/api/huellas/${personaEncontrada._id}/imagen?${Date.now()}`}
+                          src={`https://app-back-delta.vercel.app/api/huellas/${personaEncontrada._id}/imagen`}
                           alt="Foto de la persona"
                         />
                       </div>
@@ -2377,7 +2184,7 @@ const App = () => {
                       className="modal-confirm-delete"
                       onClick={async () => {
                         try {
-                          const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/verify-password", {
+                          const response = await axios.post("https://app-back-delta.vercel.app/api/verify-password", {
                             correoInstitucional: user.correoInstitucional,
                             password: lectorPassword
                           });
@@ -2634,7 +2441,7 @@ const App = () => {
                   </div>
                 </div>
               )}
-            </div>|
+            </div>
             <div className="volver-menu-container">
               <button 
                 onClick={() => setAdminView("menu")}
