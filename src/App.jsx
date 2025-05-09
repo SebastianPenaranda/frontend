@@ -1429,7 +1429,8 @@ const App = () => {
     }
     setTipoExportacionPersonas(null);
   };
-
+  
+  //<button onClick={() => setMenu("register")}>Registrarse</button>
   return (
     <div className="app-container">
       {loggedIn && <Header className="app-header"/>}
