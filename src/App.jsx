@@ -1438,7 +1438,7 @@ const App = () => {
 
         {menu === "inicio" && !loggedIn && (
           <div className="contenedor_bienvenida">
-            <h1>Bienvenido al registro de personas de Unicatolica</h1>
+            <h1>Bienvenido al registro de personas de la Unicatolica</h1>
             <h1 className="pance">Sede Pance</h1>
             <p>Seleccione una opción:</p>
             <button onClick={() => setMenu("login")}>Iniciar Sesión</button>
