@@ -10,14 +10,9 @@ import autoTable from "jspdf-autotable";
 
 // Constantes para roles y campos dinámicos
 const ROLES_UNIVERSIDAD = [
-  "Estudiante",
   "Profesor / Docente",
   "Personal Administrativo",
-  "Egresado",
-  "Visitante",
-  "Colaborador Externo",
-  "Personal de Servicios",
-  "Becario / Pasante"
+  "Seguridad"
 ];
 
 const CARRERAS_PREGRADO = [
@@ -1479,48 +1474,147 @@ const App = () => {
               <div className="panelAdministradorCuadro">
                   <h1>Panel de Administrador</h1>
                   <div className="admin-menu-btns">
-                    <button onClick={() => setAdminView("registro")}>Registro de Personas</button>
+                    <button onClick={() => setAdminView("registro")} className="admin-menu-btn">
+                      <span>👥</span> Registro de Personas
+                    </button>
                     <button onClick={() => {
                       setAdminView("ver_registros");
                       fetchHuellas();
-                    }}>Ver Registros</button>
-                    <button onClick={() => setAdminView("historial")}>Historial</button>
-                    <button onClick={() => setAdminView("registrar_usuario")}>Registrar Usuario</button>
-                    <button onClick={logout}>Cerrar Sesión</button>
+                    }} className="admin-menu-btn">
+                      <span>📋</span> Ver Registros
+                    </button>
+                    <button onClick={() => setAdminView("historial")} className="admin-menu-btn">
+                      <span>📊</span> Historial
+                    </button>
+                    <button onClick={() => setAdminView("registrar_usuario")} className="admin-menu-btn">
+                      <span>👤</span> Registrar Usuario
+                    </button>
+                    <button onClick={logout} className="admin-menu-btn admin-menu-btn-logout">
+                      <span>🚪</span> Cerrar Sesión
+                    </button>
                   </div>
               </div>
               </>
             )}
 
             {adminView === "registrar_usuario" && (
-              <div className="contenedor_registro">
+              <div className="panelRegistroCuadro">
                 <h1>Registro de Usuario</h1>
-                <label>Nombre:</label>
-                <input type="text" name="nombre" placeholder="Ingrese su nombre" value={user.nombre} onChange={handleAuthChange} /><br />
-                <label>Apellido:</label>
-                <input type="text" name="apellido" placeholder="Ingrese su apellido" value={user.apellido} onChange={handleAuthChange} /><br />
-                <label>Fecha de Nacimiento:</label>
-                <input type="date" name="fechaNacimiento" value={user.fechaNacimiento} onChange={handleAuthChange} /><br />
-                <label>ID Institucional:</label>
-                <input type="text" name="idInstitucional" placeholder="Ingrese su ID institucional" value={user.idInstitucional} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" /><br />
-                <label>Cédula:</label>
-                <input type="text" name="cedula" placeholder="Ingrese su número de cédula" value={user.cedula} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" /><br />
-                <label>Rol en la Universidad:</label>
-                <input type="text" name="rolUniversidad" placeholder="Ingrese su rol en la universidad" value={user.rolUniversidad} onChange={handleAuthChange} /><br />
-                <label>Correo Personal:</label>
-                <input type="email" name="correoPersonal" placeholder="Ingrese su correo personal" value={user.correoPersonal} onChange={handleAuthChange} /><br />
-                <label>Correo Institucional:</label>
-                <input type="email" name="correoInstitucional" placeholder="Ingrese su correo institucional" value={user.correoInstitucional} onChange={handleAuthChange} /><br />
-                <label>Contraseña:</label>
-                <input type="password" name="password" placeholder="Ingrese su contraseña" value={user.password} onChange={handleAuthChange} /><br />
-                <label>Rol en la Aplicación:</label>
-                <select name="role" value={user.role} onChange={handleAuthChange}>
-                  <option value="admin">Administrador</option>
-                  <option value="lector">Lector</option>
-                </select><br />
-                <button onClick={register}>Registrar Usuario</button>
-                <br />
-                <button onClick={() => setAdminView("menu")}>Volver</button>
+                <div className="admin-form">
+                  <div className="form-section">
+                    <h2>Información Personal</h2>
+                    <label>Nombre:</label>
+                    <input type="text" name="nombre" placeholder="Ingrese el nombre" value={user.nombre} onChange={handleAuthChange} required /><br />
+                    <label>Apellido:</label>
+                    <input type="text" name="apellido" placeholder="Ingrese el apellido" value={user.apellido} onChange={handleAuthChange} required /><br />
+                    <label>Fecha de Nacimiento:</label>
+                    <input type="date" name="fechaNacimiento" value={user.fechaNacimiento} onChange={handleAuthChange} required /><br />
+                    <label>ID Institucional:</label>
+                    <input type="text" name="idInstitucional" placeholder="Ingrese el ID institucional" value={user.idInstitucional} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" required /><br />
+                    <label>Cédula:</label>
+                    <input type="text" name="cedula" placeholder="Ingrese el número de cédula" value={user.cedula} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" required /><br />
+                    <label>Rol en la Universidad:</label>
+                    <select name="rolUniversidad" value={user.rolUniversidad} onChange={handleAuthChange} required>
+                      <option value="">Seleccione un rol</option>
+                      {ROLES_UNIVERSIDAD.map(rol => (
+                        <option key={rol} value={rol}>{rol}</option>
+                      ))}
+                    </select><br />
+                    <label>Correo Personal:</label>
+                    <input type="email" name="correoPersonal" placeholder="Ingrese el correo personal" value={user.correoPersonal} onChange={handleAuthChange} required /><br />
+                    <label>Correo Institucional:</label>
+                    <input type="email" name="correoInstitucional" placeholder="Ingrese el correo institucional" value={user.correoInstitucional} onChange={handleAuthChange} required /><br />
+                    <label>Contraseña:</label>
+                    <input type="password" name="password" placeholder="Ingrese la contraseña" value={user.password} onChange={handleAuthChange} required /><br />
+                    <label>Rol en la Aplicación:</label>
+                    <select name="role" value={user.role} onChange={handleAuthChange} required>
+                      <option value="">Seleccione un rol</option>
+                      <option value="admin">Administrador</option>
+                      <option value="lector">Lector</option>
+                    </select><br />
+
+                    {/* Campos específicos según el rol */}
+                    {user.rolUniversidad === 'Profesor / Docente' && (
+                      <>
+                        <label>Departamento / Facultad:</label>
+                        <select name="departamento" value={user.departamento} onChange={handleAuthChange} required>
+                          <option value="">Seleccione un departamento</option>
+                          {DEPARTAMENTOS.map(dep => (
+                            <option key={dep} value={dep}>{dep}</option>
+                          ))}
+                        </select><br />
+                        <label>Categoría Académica:</label>
+                        <select name="categoriaAcademica" value={user.categoriaAcademica} onChange={handleAuthChange} required>
+                          <option value="">Seleccione una categoría</option>
+                          <option value="Asistente">Asistente</option>
+                          <option value="Asociado">Asociado</option>
+                          <option value="Titular">Titular</option>
+                        </select><br />
+                        <label>Horario de Atención:</label>
+                        <select name="horarioAtencion" value={user.horarioAtencion} onChange={handleAuthChange} required>
+                          <option value="">Seleccione un horario</option>
+                          <option value="Mañana (8:00–12:00)">Mañana (8:00–12:00)</option>
+                          <option value="Tarde (13:00–17:00)">Tarde (13:00–17:00)</option>
+                          <option value="Mixto">Mixto</option>
+                        </select><br />
+                      </>
+                    )}
+
+                    {user.rolUniversidad === 'Personal Administrativo' && (
+                      <>
+                        <label>Dependencia:</label>
+                        <select name="dependencia" value={user.dependencia} onChange={handleAuthChange} required>
+                          <option value="">Seleccione una dependencia</option>
+                          {DEPENDENCIAS.map(dep => (
+                            <option key={dep} value={dep}>{dep}</option>
+                          ))}
+                        </select><br />
+                        <label>Cargo / Título del Puesto:</label>
+                        <input type="text" name="cargo" placeholder="Ingrese el cargo" value={user.cargo} onChange={handleAuthChange} required /><br />
+                        <label>Teléfono Interno:</label>
+                        <input type="text" name="telefonoInterno" placeholder="Ingrese el teléfono interno" value={user.telefonoInterno} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" required /><br />
+                        <label>Turno Laboral:</label>
+                        <select name="turnoLaboral" value={user.turnoLaboral} onChange={handleAuthChange} required>
+                          <option value="">Seleccione un turno</option>
+                          <option value="Mañana">Mañana</option>
+                          <option value="Tarde">Tarde</option>
+                          <option value="Jornada completa">Jornada completa</option>
+                        </select><br />
+                      </>
+                    )}
+
+                    {user.rolUniversidad === 'Seguridad' && (
+                      <>
+                        <label>Área:</label>
+                        <select name="area" value={user.area} onChange={handleAuthChange} required>
+                          <option value="">Seleccione un área</option>
+                          <option value="Entrada Principal">Entrada Principal</option>
+                          <option value="Salida Principal">Salida Principal</option>
+                          <option value="Estacionamiento">Estacionamiento</option>
+                          <option value="Patrullaje">Patrullaje</option>
+                        </select><br />
+                        <label>Turno:</label>
+                        <select name="turno" value={user.turno} onChange={handleAuthChange} required>
+                          <option value="">Seleccione un turno</option>
+                          <option value="Mañana">Mañana</option>
+                          <option value="Tarde">Tarde</option>
+                          <option value="Noche">Noche</option>
+                        </select><br />
+                        <label>Número de Empleado:</label>
+                        <input type="text" name="numeroEmpleado" placeholder="Ingrese el número de empleado" value={user.numeroEmpleado} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" required /><br />
+                      </>
+                    )}
+                  </div>
+
+                  <div className="form-buttons">
+                    <button onClick={register} className="admin-btn-guardar">
+                      <span>💾</span> Registrar Usuario
+                    </button>
+                    <button onClick={() => setAdminView("menu")} className="admin-btn-volver">
+                      <span>←</span> Volver
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 
