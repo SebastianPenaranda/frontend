@@ -515,7 +515,7 @@ const App = () => {
         password: "", 
         role: "lector" 
       });
-      handleMenuChange("inicio");
+      setAdminView("menu");
     } catch {
       toast.error("Error en el registro");
     }
@@ -1447,39 +1447,6 @@ const App = () => {
             <h1 className="pance">Sede Pance</h1>
             <p>Seleccione una opción:</p>
             <button onClick={() => setMenu("login")}>Iniciar Sesión</button>
-            <button onClick={() => setMenu("register")}>Registrarse</button>
-          </div>
-        )}
-
-        {menu === "register" && !loggedIn && (
-          <div className="contenedor_registro">
-            <h1>Registro</h1>
-            <label>Nombre:</label>
-            <input type="text" name="nombre" placeholder="Ingrese su nombre" value={user.nombre} onChange={handleAuthChange} /><br />
-            <label>Apellido:</label>
-            <input type="text" name="apellido" placeholder="Ingrese su apellido" value={user.apellido} onChange={handleAuthChange} /><br />
-            <label>Fecha de Nacimiento:</label>
-            <input type="date" name="fechaNacimiento" value={user.fechaNacimiento} onChange={handleAuthChange} /><br />
-            <label>ID Institucional:</label>
-            <input type="text" name="idInstitucional" placeholder="Ingrese su ID institucional" value={user.idInstitucional} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" /><br />
-            <label>Cédula:</label>
-            <input type="text" name="cedula" placeholder="Ingrese su número de cédula" value={user.cedula} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" /><br />
-            <label>Rol en la Universidad:</label>
-            <input type="text" name="rolUniversidad" placeholder="Ingrese su rol en la universidad" value={user.rolUniversidad} onChange={handleAuthChange} /><br />
-            <label>Correo Personal:</label>
-            <input type="email" name="correoPersonal" placeholder="Ingrese su correo personal" value={user.correoPersonal} onChange={handleAuthChange} /><br />
-            <label>Correo Institucional:</label>
-            <input type="email" name="correoInstitucional" placeholder="Ingrese su correo institucional" value={user.correoInstitucional} onChange={handleAuthChange} /><br />
-            <label>Contraseña:</label>
-            <input type="password" name="password" placeholder="Ingrese su contraseña" value={user.password} onChange={handleAuthChange} /><br />
-            <label>Rol en la Aplicación:</label>
-            <select name="role" value={user.role} onChange={handleAuthChange}>
-              <option value="admin">Administrador</option>
-              <option value="lector">Lector</option>
-            </select><br />
-            <button onClick={register}>Registrarse</button>
-            <br />
-            <button onClick={() => handleMenuChange("inicio")}>Volver</button>
           </div>
         )}
 
@@ -1518,10 +1485,43 @@ const App = () => {
                       fetchHuellas();
                     }}>Ver Registros</button>
                     <button onClick={() => setAdminView("historial")}>Historial</button>
+                    <button onClick={() => setAdminView("registrar_usuario")}>Registrar Usuario</button>
                     <button onClick={logout}>Cerrar Sesión</button>
                   </div>
               </div>
               </>
+            )}
+
+            {adminView === "registrar_usuario" && (
+              <div className="contenedor_registro">
+                <h1>Registro de Usuario</h1>
+                <label>Nombre:</label>
+                <input type="text" name="nombre" placeholder="Ingrese su nombre" value={user.nombre} onChange={handleAuthChange} /><br />
+                <label>Apellido:</label>
+                <input type="text" name="apellido" placeholder="Ingrese su apellido" value={user.apellido} onChange={handleAuthChange} /><br />
+                <label>Fecha de Nacimiento:</label>
+                <input type="date" name="fechaNacimiento" value={user.fechaNacimiento} onChange={handleAuthChange} /><br />
+                <label>ID Institucional:</label>
+                <input type="text" name="idInstitucional" placeholder="Ingrese su ID institucional" value={user.idInstitucional} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" /><br />
+                <label>Cédula:</label>
+                <input type="text" name="cedula" placeholder="Ingrese su número de cédula" value={user.cedula} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" /><br />
+                <label>Rol en la Universidad:</label>
+                <input type="text" name="rolUniversidad" placeholder="Ingrese su rol en la universidad" value={user.rolUniversidad} onChange={handleAuthChange} /><br />
+                <label>Correo Personal:</label>
+                <input type="email" name="correoPersonal" placeholder="Ingrese su correo personal" value={user.correoPersonal} onChange={handleAuthChange} /><br />
+                <label>Correo Institucional:</label>
+                <input type="email" name="correoInstitucional" placeholder="Ingrese su correo institucional" value={user.correoInstitucional} onChange={handleAuthChange} /><br />
+                <label>Contraseña:</label>
+                <input type="password" name="password" placeholder="Ingrese su contraseña" value={user.password} onChange={handleAuthChange} /><br />
+                <label>Rol en la Aplicación:</label>
+                <select name="role" value={user.role} onChange={handleAuthChange}>
+                  <option value="admin">Administrador</option>
+                  <option value="lector">Lector</option>
+                </select><br />
+                <button onClick={register}>Registrar Usuario</button>
+                <br />
+                <button onClick={() => setAdminView("menu")}>Volver</button>
+              </div>
             )}
 
             {adminView === "registro" && (
