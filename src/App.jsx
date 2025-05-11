@@ -1366,6 +1366,15 @@ const App = () => {
       toast.error("No hay datos para exportar");
       return;
     }
+    // Definir las columnas clave
+    const columnasClave = [
+      { key: 'cedula', label: 'Cédula' },
+      { key: 'idInstitucional', label: 'ID Institucional' },
+      { key: 'rolUniversidad', label: 'Rol en la Universidad' },
+      { key: 'correoInstitucional', label: 'Correo Institucional' }
+    ];
+
+    // Campos de sí/no y sus desgloses
     const camposSiNo = [
       { pregunta: 'perteneceSemillero', detalle: 'nombreSemillero', label: 'Semillero' },
       { pregunta: 'tieneProyectoActivo', detalle: 'nombreProyecto', label: 'Proyecto Activo' }
@@ -1377,13 +1386,24 @@ const App = () => {
         campos.splice(index + idx, 0, label);
       }
     });
-    const headers = campos.map(formatearCampo);
-    const doc = new jsPDF();
-    doc.text("Historial de Personas", 14, 16);
-    autoTable(doc, {
-      startY: 22,
-      head: [headers],
-      body: datosExportar.map(p => {
+    let headers, body, doc;
+    // Si hay más de 6 columnas, solo exportar las claves
+    if (campos.length > 6) {
+      headers = columnasClave.map(c => c.label);
+      body = datosExportar.map(p => columnasClave.map(c => p[c.key] || ''));
+      doc = new jsPDF({ orientation: 'portrait' });
+      doc.text("Historial de Personas", 14, 16);
+      autoTable(doc, {
+        startY: 22,
+        head: [headers],
+        body,
+        styles: { fontSize: 10 },
+        headStyles: { fillColor: [79, 86, 198] },
+        margin: { left: 8, right: 8 }
+      });
+    } else {
+      headers = campos.map(formatearCampo);
+      body = datosExportar.map(p => {
         let fila = [];
         campos.forEach(campo => {
           const siNo = camposSiNo.find(c => c.label === campo);
@@ -1398,11 +1418,18 @@ const App = () => {
           }
         });
         return fila;
-      }),
-      styles: { fontSize: 8 },
-      headStyles: { fillColor: [79, 86, 198] },
-      margin: { left: 8, right: 8 }
-    });
+      });
+      doc = new jsPDF({ orientation: 'landscape' });
+      doc.text("Historial de Personas", 14, 16);
+      autoTable(doc, {
+        startY: 22,
+        head: [headers],
+        body,
+        styles: { fontSize: 7 },
+        headStyles: { fillColor: [79, 86, 198] },
+        margin: { left: 8, right: 8 }
+      });
+    }
     doc.save("Historial_Personas.pdf");
     toast.success("Exportación a PDF exitosa");
   };
