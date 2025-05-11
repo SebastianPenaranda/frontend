@@ -1788,7 +1788,7 @@ const App = () => {
 
                   <div className="form-buttons">
                     <button onClick={register} className="admin-btn-guardar">
-                      <span>💾</span> Registrar Usuario
+                      <span></span> Registrar Usuario
                     </button>
                     <button onClick={() => setAdminView("menu")} className="admin-btn-volver">
                       <span>←</span> Volver
