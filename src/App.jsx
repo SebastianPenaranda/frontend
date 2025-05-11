@@ -285,7 +285,7 @@ const App = () => {
       return;
     }
     try {
-      await axios.post("http://localhost:5000/recuperar-password", { correoInstitucional: forgotPasswordEmail });
+      await axios.post("https://backend-coral-theta-21.vercel.app/api/recuperar-password", { correoInstitucional: forgotPasswordEmail });
       setMensajeRecuperar("Si el correo existe, recibirás un mensaje con instrucciones para restablecer tu contraseña.");
     } catch (error) {
       setMensajeRecuperar(error.response?.data?.error || "Error al solicitar recuperación.");
@@ -294,21 +294,21 @@ const App = () => {
   
   const handleResetPassword = async () => {
     setMensajeReset("");
-    if (!forgotPasswordEmail || !tokenReset || !nuevaPassword) {
+    if (!forgotPasswordEmail || !tokenInput || !nuevaPassword) {
       setMensajeReset("Completa todos los campos.");
       return;
     }
     try {
-      await axios.post("http://localhost:5000/reset-password", {
+      await axios.post("https://backend-coral-theta-21.vercel.app/api/reset-password", {
         correoInstitucional: forgotPasswordEmail,
-        token: tokenReset,
+        token: tokenInput,
         nuevaPassword
       });
       setMensajeReset("Contraseña restablecida correctamente. Ya puedes iniciar sesión.");
       setMostrarReset(false);
       setMostrarRecuperar(false);
       setForgotPasswordEmail("");
-      setTokenReset("");
+      setTokenInput("");
       setNuevaPassword("");
     } catch (error) {
       setMensajeReset(error.response?.data?.error || "Error al restablecer la contraseña.");
