@@ -299,7 +299,7 @@ const App = () => {
       return;
     }
     try {
-      await axios.post("http://localhost:5000/reset-password", {
+      await axios.post("https://frontend-jade-nine-61.vercel.app/api/reset-password", {
         correoInstitucional: forgotPasswordEmail,
         token: tokenReset,
         nuevaPassword
