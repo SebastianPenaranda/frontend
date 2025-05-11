@@ -297,7 +297,7 @@ const App = () => {
   
   const handleResetPassword = async () => {
     setMensajeReset("");
-    if (!forgotPasswordEmail || !tokenInput || !newPassword)  {
+    if (!forgotPasswordEmail || !tokenInput || !newPassword) {
       setMensajeReset("Completa todos los campos.");
       return;
     }
