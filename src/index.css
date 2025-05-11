@@ -1717,6 +1717,30 @@ select option {
   color: #222;
 }
 
+.import-excel-input {
+  margin: 1rem 0;
+  padding: 0.5rem;
+  border: 1px solid #bfc0c0;
+  border-radius: 8px;
+  width: 100%;
+  background: #f4f6fb;
+}
+
+.import-excel-input::-webkit-file-upload-button {
+  background: #17a2b8;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-right: 1rem;
+}
+
+.import-excel-input::-webkit-file-upload-button:hover {
+  background: #138496;
+}
+
 @media (max-width: 900px) {
   .historial-filtros {
     flex-direction: column;
