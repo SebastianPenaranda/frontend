@@ -297,10 +297,16 @@ const App = () => {
   
   const handleResetPassword = async () => {
     setMensajeReset("");
-    if (!forgotPasswordEmail || !tokenInput || !newPassword) {
+    if (!forgotPasswordEmail || !tokenInput || !newPassword || !confirmPassword) {
       setMensajeReset("Completa todos los campos.");
       return;
     }
+
+    if (newPassword !== confirmPassword) {
+      setMensajeReset("Las contraseñas no coinciden.");
+      return;
+    }
+
     try {
       await axios.post("https://backend-coral-theta-21.vercel.app/api/reset-password", {
         correoInstitucional: forgotPasswordEmail,
@@ -313,6 +319,7 @@ const App = () => {
       setForgotPasswordEmail("");
       setTokenInput("");
       setNewPassword("");
+      setConfirmPassword("");
     } catch (error) {
       setMensajeReset(error.response?.data?.error || "Error al restablecer la contraseña.");
     }
