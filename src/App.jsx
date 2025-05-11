@@ -280,12 +280,12 @@ const App = () => {
 
   const handleRecuperarPassword = async () => {
     setMensajeRecuperar("");
-    if (!correoRecuperar) {
+    if (!forgotPasswordEmail) {
       setMensajeRecuperar("Por favor ingresa tu correo institucional.");
       return;
     }
     try {
-      await axios.post("http://localhost:5000/recuperar-password", { correoInstitucional: correoRecuperar });
+      await axios.post("http://localhost:5000/recuperar-password", { correoInstitucional: forgotPasswordEmail });
       setMensajeRecuperar("Si el correo existe, recibirás un mensaje con instrucciones para restablecer tu contraseña.");
     } catch (error) {
       setMensajeRecuperar(error.response?.data?.error || "Error al solicitar recuperación.");
@@ -294,20 +294,20 @@ const App = () => {
   
   const handleResetPassword = async () => {
     setMensajeReset("");
-    if (!correoRecuperar || !tokenReset || !nuevaPassword) {
+    if (!forgotPasswordEmail || !tokenReset || !nuevaPassword) {
       setMensajeReset("Completa todos los campos.");
       return;
     }
     try {
       await axios.post("http://localhost:5000/reset-password", {
-        correoInstitucional: correoRecuperar,
+        correoInstitucional: forgotPasswordEmail,
         token: tokenReset,
         nuevaPassword
       });
       setMensajeReset("Contraseña restablecida correctamente. Ya puedes iniciar sesión.");
       setMostrarReset(false);
       setMostrarRecuperar(false);
-      setCorreoRecuperar("");
+      setForgotPasswordEmail("");
       setTokenReset("");
       setNuevaPassword("");
     } catch (error) {
