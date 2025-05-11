@@ -274,6 +274,8 @@ const App = () => {
   const [resetToken, setResetToken] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showTokenInput, setShowTokenInput] = useState(false);
+  const [tokenInput, setTokenInput] = useState("");
 
   useEffect(() => {
     if (role === "lector") {
@@ -1485,7 +1487,6 @@ const App = () => {
         return;
       }
 
-      // Validar formato del correo
       if (!forgotPasswordEmail.includes('@')) {
         toast.error("Por favor ingrese un correo válido");
         return;
@@ -1497,10 +1498,9 @@ const App = () => {
       });
 
       if (response.data.success) {
-        toast.success("Se ha enviado un correo con las instrucciones para recuperar su contraseña");
-        setShowForgotPassword(false);
-        setForgotPasswordEmail("");
-        setForgotPasswordMessage("");
+        toast.success("Se ha enviado un token de verificación a su correo electrónico");
+        setShowTokenInput(true);
+        setForgotPasswordMessage("Por favor ingrese el token recibido en su correo electrónico");
       } else {
         toast.error(response.data.message || "No se pudo procesar la solicitud");
       }
@@ -1517,6 +1517,31 @@ const App = () => {
     }
   };
 
+  const verifyToken = async () => {
+    try {
+      if (!tokenInput) {
+        toast.error("Por favor ingrese el token de verificación");
+        return;
+      }
+
+      const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/verify-token", {
+        correoInstitucional: forgotPasswordEmail,
+        token: tokenInput
+      });
+
+      if (response.data.success) {
+        setShowResetPasswordForm(true);
+        setShowTokenInput(false);
+        setResetToken(tokenInput);
+        toast.success("Token verificado correctamente");
+      } else {
+        toast.error("Token inválido o expirado");
+      }
+    } catch (error) {
+      toast.error("Error al verificar el token. Por favor intente nuevamente");
+    }
+  };
+
   const handleResetPassword = async () => {
     try {
       if (!newPassword || !confirmPassword) {
@@ -1529,7 +1554,13 @@ const App = () => {
         return;
       }
 
+      if (newPassword.length < 6) {
+        toast.error("La contraseña debe tener al menos 6 caracteres");
+        return;
+      }
+
       const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/reset-password", {
+        correoInstitucional: forgotPasswordEmail,
         token: resetToken,
         newPassword: newPassword
       });
@@ -1537,12 +1568,15 @@ const App = () => {
       if (response.data.success) {
         toast.success("Contraseña actualizada exitosamente");
         setShowResetPasswordForm(false);
+        setShowForgotPassword(false);
         setResetToken("");
         setNewPassword("");
         setConfirmPassword("");
+        setForgotPasswordEmail("");
+        setForgotPasswordMessage("");
       }
     } catch (error) {
-      toast.error(error.response?.data?.error || "Error al restablecer la contraseña");
+      toast.error("Error al restablecer la contraseña. Por favor intente nuevamente");
     }
   };
 
@@ -1598,38 +1632,119 @@ const App = () => {
           <div className="modal-confirm-bg">
             <div className="modal-confirm-box">
               <h2 className="modal-confirm-title">Recuperar Contraseña</h2>
-              <p className="modal-confirm-msg">
-                Ingrese su correo institucional para recibir instrucciones de recuperación de contraseña.
-              </p>
-              <input
-                type="email"
-                value={forgotPasswordEmail}
-                onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                placeholder="Correo institucional"
-                className="forgot-password-input"
-              />
-              {forgotPasswordMessage && (
-                <p className="forgot-password-message">{forgotPasswordMessage}</p>
+              {!showTokenInput && !showResetPasswordForm && (
+                <>
+                  <p className="modal-confirm-msg">
+                    Ingrese su correo institucional para recibir un token de verificación.
+                  </p>
+                  <input
+                    type="email"
+                    value={forgotPasswordEmail}
+                    onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                    placeholder="Correo institucional"
+                    className="forgot-password-input"
+                  />
+                  {forgotPasswordMessage && (
+                    <p className="forgot-password-message">{forgotPasswordMessage}</p>
+                  )}
+                  <div className="modal-confirm-btns">
+                    <button
+                      onClick={() => {
+                        setShowForgotPassword(false);
+                        setForgotPasswordEmail("");
+                        setForgotPasswordMessage("");
+                      }}
+                      className="modal-confirm-cancel"
+                      disabled={isSendingEmail}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={handleForgotPassword}
+                      className="modal-confirm-delete"
+                      disabled={isSendingEmail}
+                    >
+                      Enviar Token
+                    </button>
+                  </div>
+                </>
               )}
-              <div className="modal-confirm-btns">
-                <button
-                  onClick={() => {
-                    setShowForgotPassword(false);
-                    setForgotPasswordEmail("");
-                    setForgotPasswordMessage("");
-                  }}
-                  className="modal-confirm-cancel"
-                  disabled={isSendingEmail}
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleForgotPassword}
-                  className="modal-confirm-delete"
-                >
-                  Enviar
-                </button>
-              </div>
+
+              {showTokenInput && !showResetPasswordForm && (
+                <>
+                  <p className="modal-confirm-msg">
+                    Ingrese el token recibido en su correo electrónico.
+                  </p>
+                  <input
+                    type="text"
+                    value={tokenInput}
+                    onChange={(e) => setTokenInput(e.target.value)}
+                    placeholder="Token de verificación"
+                    className="forgot-password-input"
+                  />
+                  <div className="modal-confirm-btns">
+                    <button
+                      onClick={() => {
+                        setShowForgotPassword(false);
+                        setForgotPasswordEmail("");
+                        setForgotPasswordMessage("");
+                        setShowTokenInput(false);
+                        setTokenInput("");
+                      }}
+                      className="modal-confirm-cancel"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={verifyToken}
+                      className="modal-confirm-delete"
+                    >
+                      Verificar Token
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {showResetPasswordForm && (
+                <>
+                  <p className="modal-confirm-msg">
+                    Ingrese su nueva contraseña.
+                  </p>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Nueva contraseña"
+                    className="forgot-password-input"
+                  />
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirmar contraseña"
+                    className="forgot-password-input"
+                  />
+                  <div className="modal-confirm-btns">
+                    <button
+                      onClick={() => {
+                        setShowForgotPassword(false);
+                        setShowResetPasswordForm(false);
+                        setNewPassword("");
+                        setConfirmPassword("");
+                      }}
+                      className="modal-confirm-cancel"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={handleResetPassword}
+                      className="modal-confirm-delete"
+                    >
+                      Cambiar Contraseña
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
