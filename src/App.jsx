@@ -277,6 +277,9 @@ const App = () => {
   const [showTokenInput, setShowTokenInput] = useState(false);
   const [tokenInput, setTokenInput] = useState("");
   const [mensajeReset, setMensajeReset] = useState("");
+  const [mensajeRecuperar, setMensajeRecuperar] = useState("");
+  const [mostrarReset, setMostrarReset] = useState(false);
+  const [mostrarRecuperar, setMostrarRecuperar] = useState(false);
 
   const handleRecuperarPassword = async () => {
     setMensajeRecuperar("");
@@ -294,7 +297,7 @@ const App = () => {
   
   const handleResetPassword = async () => {
     setMensajeReset("");
-    if (!forgotPasswordEmail || !tokenInput || !nuevaPassword) {
+    if (!forgotPasswordEmail || !tokenInput || !newPassword) {
       setMensajeReset("Completa todos los campos.");
       return;
     }
@@ -302,14 +305,14 @@ const App = () => {
       await axios.post("https://backend-coral-theta-21.vercel.app/api/reset-password", {
         correoInstitucional: forgotPasswordEmail,
         token: tokenInput,
-        nuevaPassword
+        nuevaPassword: newPassword
       });
       setMensajeReset("Contraseña restablecida correctamente. Ya puedes iniciar sesión.");
       setMostrarReset(false);
       setMostrarRecuperar(false);
       setForgotPasswordEmail("");
       setTokenInput("");
-      setNuevaPassword("");
+      setNewPassword("");
     } catch (error) {
       setMensajeReset(error.response?.data?.error || "Error al restablecer la contraseña.");
     }
