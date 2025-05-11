@@ -276,6 +276,7 @@ const App = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showTokenInput, setShowTokenInput] = useState(false);
   const [tokenInput, setTokenInput] = useState("");
+  const [mensajeReset, setMensajeReset] = useState("");
 
   const handleRecuperarPassword = async () => {
     setMensajeRecuperar("");
@@ -1725,6 +1726,11 @@ const App = () => {
                     placeholder="Confirmar contraseña"
                     className="forgot-password-input"
                   />
+                  {mensajeReset && (
+                    <div className="mensaje-reset" style={{ color: mensajeReset.includes('correctamente') ? 'green' : 'red', margin: '10px 0' }}>
+                      {mensajeReset}
+                    </div>
+                  )}
                   <div className="modal-confirm-btns">
                     <button
                       onClick={() => {
