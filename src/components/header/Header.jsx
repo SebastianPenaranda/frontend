@@ -59,9 +59,24 @@ const Header = ({ style }) => {
                                     <p>¿Necesitas ayuda con la aplicación?</p>
                                     <p>Nuestro equipo de soporte está disponible para ayudarte:</p>
                                     <ul>
-                                        <li>+57 3052920641</li>
-                                        <li>+57 3202300182</li>
-                                        <li>+57 3107711775</li>
+                                        <li>
+                                            <a href="https://wa.me/573052920641" target="_blank" rel="noopener noreferrer" className="whatsapp-link">
+                                                <ion-icon name="logo-whatsapp" className="whatsapp-icon"></ion-icon>
+                                                +57 3052920641
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://wa.me/573202300182" target="_blank" rel="noopener noreferrer" className="whatsapp-link">
+                                                <ion-icon name="logo-whatsapp" className="whatsapp-icon"></ion-icon>
+                                                +57 3202300182
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://wa.me/573107711775" target="_blank" rel="noopener noreferrer" className="whatsapp-link">
+                                                <ion-icon name="logo-whatsapp" className="whatsapp-icon"></ion-icon>
+                                                +57 3107711775
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             )}
