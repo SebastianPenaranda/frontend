@@ -2595,7 +2595,12 @@ const App = () => {
                 <div>
                   <div className="historial-filtros">
                     <input name="nombre" value={accesosFiltros.nombre} onChange={handleAccesosFiltroChange} placeholder="Nombre" />
-                    <input name="rolUniversidad" value={accesosFiltros.rolUniversidad} onChange={handleAccesosFiltroChange} placeholder="Rol" />
+                    <select name="rolUniversidad" value={accesosFiltros.rolUniversidad} onChange={handleAccesosFiltroChange}>
+                      <option value="">Seleccione un rol</option>
+                      {ROLES_REGISTRO_PERSONAS.map(rol => (
+                        <option key={rol} value={rol}>{rol}</option>
+                      ))}
+                    </select>
                     <input name="carnet" value={accesosFiltros.carnet} onChange={handleAccesosFiltroChange} placeholder="Carnet" />
                     <input name="numeroTarjeta" value={accesosFiltros.numeroTarjeta} onChange={handleAccesosFiltroChange} placeholder="N° Tarjeta" />
                     <input name="fecha" type="date" value={accesosFiltros.fecha} onChange={handleAccesosFiltroChange} placeholder="Fecha" />
@@ -2661,7 +2666,12 @@ const App = () => {
                     <input name="apellido" value={personasFiltros.apellido} onChange={handlePersonasFiltroChange} placeholder="Apellido" />
                     <input name="cedula" value={personasFiltros.cedula} onChange={handlePersonasFiltroChange} placeholder="Cédula" />
                     <input name="idInstitucional" value={personasFiltros.idInstitucional} onChange={handlePersonasFiltroChange} placeholder="ID Institucional" />
-                    <input name="rolUniversidad" value={personasFiltros.rolUniversidad} onChange={handlePersonasFiltroChange} placeholder="Rol" />
+                    <select name="rolUniversidad" value={personasFiltros.rolUniversidad} onChange={handlePersonasFiltroChange}>
+                      <option value="">Seleccione un rol</option>
+                      {ROLES_REGISTRO_PERSONAS.map(rol => (
+                        <option key={rol} value={rol}>{rol}</option>
+                      ))}
+                    </select>
                     <input name="correoInstitucional" value={personasFiltros.correoInstitucional} onChange={handlePersonasFiltroChange} placeholder="Correo Institucional" />
                     <button onClick={fetchPersonas}>Buscar</button>
                     <button onClick={() => { setTipoExportacionPersonas('excel'); setMostrarModalExportar(true); }} style={{background:'#28a745'}}>Exportar Excel</button>
