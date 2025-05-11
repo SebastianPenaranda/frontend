@@ -105,6 +105,23 @@ const PROGRAMAS_BECA = [
   "Cultura"
 ];
 
+const ROLES_REGISTRO_PERSONAS = [
+  "Estudiante",
+  "Profesor / Docente",
+  "Personal Administrativo",
+  "Egresado",
+  "Personal de Servicios",
+  "Becario / Pasante",
+  "Visitante",
+  "Colaborador Externo"
+];
+
+const ROLES_REGISTRO_USUARIOS = [
+  "Profesor / Docente",
+  "Personal Administrativo",
+  "Seguridad"
+];
+
 const App = () => {
   const [registrosPorPagina, setRegistrosPorPagina] = useState(5); // Establecer valor inicial
   const [paginaActual, setPaginaActual] = useState(1); // Página inicial
@@ -1586,7 +1603,7 @@ const App = () => {
                     <label>Rol en la Universidad:</label>
                     <select name="rolUniversidad" value={user.rolUniversidad} onChange={handleAuthChange} required>
                       <option value="">Seleccione un rol</option>
-                      {ROLES_UNIVERSIDAD.map(rol => (
+                      {ROLES_REGISTRO_USUARIOS.map(rol => (
                         <option key={rol} value={rol}>{rol}</option>
                       ))}
                     </select><br />
@@ -1696,24 +1713,24 @@ const App = () => {
                     {/* Campos base */}
                     <div className="form-section">
                       <h2>Información Personal</h2>
-                    <label>Nombre:</label>
+                      <label>Nombre:</label>
                       <input type="text" name="nombre" placeholder="Ingrese el nombre" value={formData.nombre} onChange={handleChange} required /><br />
-                    <label>Apellido:</label>
+                      <label>Apellido:</label>
                       <input type="text" name="apellido" placeholder="Ingrese el apellido" value={formData.apellido} onChange={handleChange} required /><br />
-                    <label>Fecha de Nacimiento:</label>
+                      <label>Fecha de Nacimiento:</label>
                       <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleChange} required /><br />
-                    <label>ID Institucional:</label>
+                      <label>ID Institucional:</label>
                       <input type="text" name="idInstitucional" placeholder="Ingrese el ID institucional" value={formData.idInstitucional} onChange={handleChange} pattern="\d*" inputMode="numeric" required /><br />
-                    <label>Cédula:</label>
+                      <label>Cédula:</label>
                       <input type="text" name="cedula" placeholder="Ingrese el número de cédula" value={formData.cedula} onChange={handleChange} pattern="\d*" inputMode="numeric" required /><br />
-                    <label>Rol en la Universidad:</label>
+                      <label>Rol en la Universidad:</label>
                       <select name="rolUniversidad" value={formData.rolUniversidad} onChange={handleChange} required>
                         <option value="">Seleccione un rol</option>
-                        {ROLES_UNIVERSIDAD.map(rol => (
+                        {ROLES_REGISTRO_PERSONAS.map(rol => (
                           <option key={rol} value={rol}>{rol}</option>
                         ))}
                       </select><br />
-                    <label>Correo Personal:</label>
+                      <label>Correo Personal:</label>
                       <input type="email" name="correoPersonal" placeholder="Ingrese el correo personal" value={formData.correoPersonal} onChange={handleChange} required /><br />
                       
                       {/* Mostrar opción de correo institucional solo para roles específicos */}
