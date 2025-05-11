@@ -1545,22 +1545,22 @@ const App = () => {
                   <h1>Panel de Administrador</h1>
                   <div className="admin-menu-btns">
                     <button onClick={() => setAdminView("registro")} className="admin-menu-btn">
-                      <span>👥</span> Registro de Personas
+                      <span></span> Registro de Personas
                     </button>
                     <button onClick={() => {
                       setAdminView("ver_registros");
                       fetchHuellas();
                     }} className="admin-menu-btn">
-                      <span>📋</span> Ver Registros
+                      <span></span> Ver Registros
                     </button>
                     <button onClick={() => setAdminView("historial")} className="admin-menu-btn">
-                      <span>📊</span> Historial
+                      <span></span> Historial
                     </button>
                     <button onClick={() => setAdminView("registrar_usuario")} className="admin-menu-btn">
-                      <span>👤</span> Registrar Usuario
+                      <span></span> Registrar Usuario
                     </button>
                     <button onClick={logout} className="admin-menu-btn admin-menu-btn-logout">
-                      <span>🚪</span> Cerrar Sesión
+                      <span></span> Cerrar Sesión
                     </button>
                   </div>
               </div>
