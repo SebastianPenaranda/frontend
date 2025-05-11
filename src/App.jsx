@@ -112,7 +112,6 @@ const ROLES_REGISTRO_PERSONAS = [
   "Egresado",
   "Personal de Servicios",
   "Becario / Pasante",
-  "Visitante",
   "Colaborador Externo"
 ];
 
@@ -267,6 +266,15 @@ const App = () => {
   const [personasLoading, setPersonasLoading] = useState(false);
   const [tipoExportacionPersonas, setTipoExportacionPersonas] = useState(null);
 
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [forgotPasswordMessage, setForgotPasswordMessage] = useState("");
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [showResetPasswordForm, setShowResetPasswordForm] = useState(false);
+  const [resetToken, setResetToken] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   useEffect(() => {
     if (role === "lector") {
       fetchHuellas();
@@ -286,8 +294,78 @@ const App = () => {
     }
   }, [adminView, adminHistorialTab, personasPage, personasLimit]);
 
+  const limpiarTodosLosFormularios = () => {
+    setFormData({ 
+      nombre: "", 
+      apellido: "", 
+      fechaNacimiento: "", 
+      idInstitucional: "", 
+      cedula: "", 
+      rolUniversidad: "", 
+      correoPersonal: "", 
+      tieneCorreoInstitucional: "",
+      correoInstitucional: "", 
+      fecha: "", 
+      hora: "", 
+      imagen: null,
+      carnet: "",
+      carrera: "",
+      semestre: "",
+      tipoMatricula: "",
+      programa: "",
+      departamento: "",
+      categoriaAcademica: "",
+      horarioAtencion: "",
+      dependencia: "",
+      cargo: "",
+      telefonoInterno: "",
+      turnoLaboral: "",
+      grupoInvestigacion: "",
+      orcid: "",
+      proyectosActivos: [],
+      anioGraduacion: "",
+      programaGrado: "",
+      tituloObtenido: "",
+      correoEgresado: "",
+      institucionProcedencia: "",
+      propositoVisita: "",
+      fechaInicioVisita: "",
+      fechaFinVisita: "",
+      empresaOrganizacion: "",
+      tipoColaboracion: "",
+      fechaInicioContrato: "",
+      fechaFinContrato: "",
+      area: "",
+      turno: "",
+      numeroEmpleado: "",
+      programaBeca: "",
+      fechaInicioBeca: "",
+      fechaFinBeca: "",
+      dependenciaAsignada: "",
+      perteneceSemillero: "",
+      nombreSemillero: "",
+      tieneProyectoActivo: "",
+      nombreProyecto: ""
+    });
+    setVisitanteForm({
+      nombre: "",
+      apellido: "",
+      cedula: "",
+      razonVisita: "",
+      numeroTarjeta: ""
+    });
+    setImagePreview(null);
+    setBusquedaCarnet("");
+    setPersonaEncontrada(null);
+    setMensajeError("");
+    setRegistroEditando(null);
+    setRegistroDetalle(null);
+    setEdicionDesdeDetalle(false);
+  };
+
   const handleMenuChange = (newMenu) => {
     setMenu(newMenu);
+    limpiarTodosLosFormularios();
   };
 
   // Función para validar el correo institucional
@@ -587,62 +665,7 @@ const App = () => {
       password: "", 
       role: "lector" 
     });
-    setFormData({ 
-      nombre: "", 
-      apellido: "", 
-      fechaNacimiento: "", 
-      idInstitucional: "", 
-      cedula: "", 
-      rolUniversidad: "", 
-      correoPersonal: "", 
-      tieneCorreoInstitucional: "",
-      correoInstitucional: "", 
-      fecha: "", 
-      hora: "", 
-      imagen: null,
-      carnet: "",
-      carrera: "",
-      semestre: "",
-      tipoMatricula: "",
-      programa: "",
-      departamento: "",
-      categoriaAcademica: "",
-      horarioAtencion: "",
-      dependencia: "",
-      cargo: "",
-      telefonoInterno: "",
-      turnoLaboral: "",
-      grupoInvestigacion: "",
-      orcid: "",
-      proyectosActivos: [],
-      anioGraduacion: "",
-      programaGrado: "",
-      tituloObtenido: "",
-      correoEgresado: "",
-      institucionProcedencia: "",
-      propositoVisita: "",
-      fechaInicioVisita: "",
-      fechaFinVisita: "",
-      empresaOrganizacion: "",
-      tipoColaboracion: "",
-      fechaInicioContrato: "",
-      fechaFinContrato: "",
-      area: "",
-      turno: "",
-      numeroEmpleado: "",
-      programaBeca: "",
-      fechaInicioBeca: "",
-      fechaFinBeca: "",
-      dependenciaAsignada: "",
-      perteneceSemillero: "",
-      nombreSemillero: "",
-      tieneProyectoActivo: "",
-      nombreProyecto: ""
-    });
-    setBusquedaCarnet("");
-    setPersonaEncontrada(null);
-    setMensajeError("");
-    setImagePreview(null);
+    limpiarTodosLosFormularios();
     handleMenuChange("inicio");
   };
 
@@ -732,30 +755,7 @@ const App = () => {
   
       if (response.data.message) {
         toast.success("Datos guardados correctamente");
-        limpiarCamposDinamicos();
-          setFormData({
-            nombre: "",
-            apellido: "",
-            fechaNacimiento: "",
-            idInstitucional: "",
-            cedula: "",
-            rolUniversidad: "",
-            correoPersonal: "",
-          tieneCorreoInstitucional: "",
-            correoInstitucional: "",
-            fecha: "",
-            hora: "",
-            imagen: null,
-            carnet: "",
-          ...Object.fromEntries(
-            Object.keys(formData)
-              .filter(key => !['nombre', 'apellido', 'fechaNacimiento', 'idInstitucional', 
-                             'cedula', 'rolUniversidad', 'correoPersonal', 'correoInstitucional',
-                             'fecha', 'hora', 'imagen', 'carnet'].includes(key))
-              .map(key => [key, ""])
-          )
-          });
-          setImagePreview(null);
+        limpiarTodosLosFormularios();
       }
     } catch (error) {
       console.error("Error al guardar:", error);
@@ -965,61 +965,7 @@ const App = () => {
       if (response.data.message) {
         toast.success("Registro actualizado correctamente");
         setRegistroEditando(null);
-        setFormData({
-          nombre: "",
-          apellido: "",
-          fechaNacimiento: "",
-          idInstitucional: "",
-          cedula: "",
-          rolUniversidad: "",
-          correoPersonal: "",
-          tieneCorreoInstitucional: "",
-          correoInstitucional: "",
-          fecha: "",
-          hora: "",
-          imagen: null,
-          carnet: "",
-          carrera: "",
-          semestre: "",
-          tipoMatricula: "",
-          programa: "",
-          departamento: "",
-          categoriaAcademica: "",
-          horarioAtencion: "",
-          dependencia: "",
-          cargo: "",
-          telefonoInterno: "",
-          turnoLaboral: "",
-          grupoInvestigacion: "",
-          orcid: "",
-          proyectosActivos: [],
-          anioGraduacion: "",
-          programaGrado: "",
-          tituloObtenido: "",
-          correoEgresado: "",
-          institucionProcedencia: "",
-          propositoVisita: "",
-          fechaInicioVisita: "",
-          fechaFinVisita: "",
-          empresaOrganizacion: "",
-          tipoColaboracion: "",
-          fechaInicioContrato: "",
-          fechaFinContrato: "",
-          area: "",
-          turno: "",
-          numeroEmpleado: "",
-          programaBeca: "",
-          fechaInicioBeca: "",
-          fechaFinBeca: "",
-          dependenciaAsignada: "",
-          perteneceSemillero: "",
-          nombreSemillero: "",
-          tieneProyectoActivo: "",
-          nombreProyecto: ""
-        });
-        setImagePreview(null);
-        setAdminView("ver_registros");
-        fetchHuellas();
+        limpiarTodosLosFormularios();
       }
     } catch (error) {
       console.error("Error al actualizar:", error);
@@ -1077,7 +1023,7 @@ const App = () => {
       case "semestre":
         return "Buscar por Semestre...";
       case "rolUniversidad":
-        return "Buscar por Rol...";
+        return "Seleccione un rol...";
       case "carrera":
         return "Buscar por Carrera...";
       default:
@@ -1150,13 +1096,7 @@ const App = () => {
 
       const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/registrar-visitante", visitanteForm);
       toast.success("Visitante registrado exitosamente");
-      setVisitanteForm({
-        nombre: "",
-        apellido: "",
-        cedula: "",
-        razonVisita: "",
-        numeroTarjeta: ""
-      });
+      limpiarTodosLosFormularios();
     } catch (error) {
       console.error("Error al registrar visitante:", error);
       toast.error("Error al registrar visitante");
@@ -1512,6 +1452,60 @@ const App = () => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    try {
+      if (!forgotPasswordEmail) {
+        toast.error("Por favor ingrese su correo institucional");
+        return;
+      }
+
+      setIsSendingEmail(true);
+      const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/forgot-password", {
+        correoInstitucional: forgotPasswordEmail
+      });
+
+      if (response.data.success) {
+        toast.success("Se ha enviado un correo con las instrucciones para recuperar su contraseña");
+        setShowForgotPassword(false);
+        setForgotPasswordEmail("");
+        setForgotPasswordMessage("");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Error al procesar la solicitud");
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    try {
+      if (!newPassword || !confirmPassword) {
+        toast.error("Por favor complete todos los campos");
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        toast.error("Las contraseñas no coinciden");
+        return;
+      }
+
+      const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/reset-password", {
+        token: resetToken,
+        newPassword: newPassword
+      });
+
+      if (response.data.success) {
+        toast.success("Contraseña actualizada exitosamente");
+        setShowResetPasswordForm(false);
+        setResetToken("");
+        setNewPassword("");
+        setConfirmPassword("");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Error al restablecer la contraseña");
+    }
+  };
+
   return (
     <div className="app-container">
       {loggedIn && <Header className="app-header"/>}
@@ -1551,6 +1545,52 @@ const App = () => {
             </select><br />
             <button onClick={login}>Entrar</button>
             <button onClick={() => handleMenuChange("inicio")}>Volver</button>
+            <div className="forgot-password-link">
+              <a href="#" onClick={(e) => { e.preventDefault(); setShowForgotPassword(true); }}>
+                ¿Olvidó su contraseña?
+              </a>
+            </div>
+          </div>
+        )}
+
+        {/* Modal de Olvidó su contraseña */}
+        {showForgotPassword && (
+          <div className="modal-confirm-bg">
+            <div className="modal-confirm-box">
+              <h2 className="modal-confirm-title">Recuperar Contraseña</h2>
+              <p className="modal-confirm-msg">
+                Ingrese su correo institucional para recibir instrucciones de recuperación de contraseña.
+              </p>
+              <input
+                type="email"
+                value={forgotPasswordEmail}
+                onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                placeholder="Correo institucional"
+                className="forgot-password-input"
+              />
+              {forgotPasswordMessage && (
+                <p className="forgot-password-message">{forgotPasswordMessage}</p>
+              )}
+              <div className="modal-confirm-btns">
+                <button
+                  onClick={() => {
+                    setShowForgotPassword(false);
+                    setForgotPasswordEmail("");
+                    setForgotPasswordMessage("");
+                  }}
+                  className="modal-confirm-cancel"
+                  disabled={isSendingEmail}
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleForgotPassword}
+                  className="modal-confirm-delete"
+                >
+                  Enviar
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
@@ -1784,6 +1824,12 @@ const App = () => {
                       {/* Campos específicos según el rol */}
                       {formData.rolUniversidad === 'Estudiante' && (
                         <>
+                          <label>Programa:</label>
+                          <select name="programa" value={formData.programa} onChange={handleChange} required>
+                            <option value="">Seleccione un programa</option>
+                            <option value="Pregrado">Pregrado</option>
+                            <option value="Posgrado">Posgrado</option>
+                          </select><br />
                           <label>Carrera:</label>
                           <select name="carrera" value={formData.carrera} onChange={handleChange} required>
                             <option value="">Seleccione una carrera</option>
@@ -1798,7 +1844,7 @@ const App = () => {
                               : null
                             }
                           </select><br />
-                    <label>Semestre:</label>
+                          <label>Semestre:</label>
                           <select name="semestre" value={formData.semestre} onChange={handleChange} required>
                             <option value="">Seleccione un semestre</option>
                             {[...Array(12)].map((_, i) => (
@@ -1815,12 +1861,6 @@ const App = () => {
                             <option value="Media matrícula">Media matrícula</option>
                             <option value="Matrícula por créditos">Matrícula por créditos</option>
                             <option value="Créditos adicionales">Créditos adicionales</option>
-                          </select><br />
-                          <label>Programa:</label>
-                          <select name="programa" value={formData.programa} onChange={handleChange} required>
-                            <option value="">Seleccione un programa</option>
-                            <option value="Pregrado">Pregrado</option>
-                            <option value="Posgrado">Posgrado</option>
                           </select><br />
                           <label>¿Pertenece a algún semillero de investigación?</label>
                           <select name="perteneceSemillero" value={formData.perteneceSemillero} onChange={handleChange} required>
@@ -2075,16 +2115,32 @@ const App = () => {
                             </select>
                           </div>
                           <div className="admin-barra-input">
-                            <input
-                              type={tipoFiltro === "semestre" ? "number" : "text"}
-                              value={valorBusqueda}
-                              onChange={(e) => {
-                                setValorBusqueda(e.target.value);
-                                setPaginaActual(1);
-                              }}
-                              placeholder={obtenerPlaceholder()}
-                              className="admin-busqueda-input"
-                            />
+                            {tipoFiltro === "rolUniversidad" ? (
+                              <select
+                                value={valorBusqueda}
+                                onChange={(e) => {
+                                  setValorBusqueda(e.target.value);
+                                  setPaginaActual(1);
+                                }}
+                                className="admin-busqueda-input"
+                              >
+                                <option value="">Seleccione un rol</option>
+                                {ROLES_REGISTRO_PERSONAS.map(rol => (
+                                  <option key={rol} value={rol}>{rol}</option>
+                                ))}
+                              </select>
+                            ) : (
+                              <input
+                                type={tipoFiltro === "semestre" ? "number" : "text"}
+                                value={valorBusqueda}
+                                onChange={(e) => {
+                                  setValorBusqueda(e.target.value);
+                                  setPaginaActual(1);
+                                }}
+                                placeholder={obtenerPlaceholder()}
+                                className="admin-busqueda-input"
+                              />
+                            )}
                           </div>
                           {valorBusqueda && (
                             <button
