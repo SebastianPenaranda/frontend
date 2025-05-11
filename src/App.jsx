@@ -615,12 +615,6 @@ const App = () => {
 
   const login = async () => {
     try {
-      console.log("Intentando login con:", {
-        correoInstitucional: user.correoInstitucional,
-        password: user.password,
-        role: user.role
-      });
-      
       if (!user.correoInstitucional || !user.password || !user.role) {
         toast.error("Por favor complete todos los campos");
         return;
@@ -632,18 +626,15 @@ const App = () => {
         role: user.role
       });
       
-      console.log("Respuesta del servidor:", response.data);
-      
       if (response.data) {
         setLoggedIn(true);
         setRole(response.data.role);
         toast.success(`Sesión iniciada como ${response.data.role}`);
         if (response.data.role === 'admin') {
-          setAdminView('menu'); // Siempre mostrar menú principal al iniciar sesión como admin
+          setAdminView('menu');
         }
       }
     } catch (error) {
-      console.error("Error en login:", error.response?.data || error);
       toast.error(error.response?.data?.error || "Error en el inicio de sesión");
     }
   };
@@ -1514,16 +1505,12 @@ const App = () => {
         toast.error(response.data.message || "No se pudo procesar la solicitud");
       }
     } catch (error) {
-      console.error("Error en recuperación de contraseña:", error);
-      if (error.response) {
-        // El servidor respondió con un código de error
-        toast.error(error.response.data.message || "Error al procesar la solicitud");
-      } else if (error.request) {
-        // La solicitud fue hecha pero no se recibió respuesta
-        toast.error("No se pudo conectar con el servidor");
+      if (error.response?.status === 404) {
+        toast.error("El correo no está registrado en el sistema");
+      } else if (error.response?.status === 500) {
+        toast.error("Error en el servidor. Por favor intente más tarde");
       } else {
-        // Error en la configuración de la solicitud
-        toast.error("Error al procesar la solicitud");
+        toast.error("Error al procesar la solicitud. Por favor intente nuevamente");
       }
     } finally {
       setIsSendingEmail(false);
