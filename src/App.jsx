@@ -283,14 +283,13 @@ const App = () => {
 
   useEffect(() => {
     if (adminView === "historial" && adminHistorialTab === "accesos") {
-      fetchAccesos();
+      buscarEnHistorial('accesos', accesosFiltros, accesosPage, accesosLimit);
     }
-    // eslint-disable-next-line
   }, [adminView, adminHistorialTab, accesosPage, accesosLimit]);
 
   useEffect(() => {
     if (adminView === "historial" && adminHistorialTab === "personas") {
-      fetchPersonas();
+      buscarEnHistorial('personas', personasFiltros, personasPage, personasLimit);
     }
   }, [adminView, adminHistorialTab, personasPage, personasLimit]);
 
@@ -370,7 +369,7 @@ const App = () => {
 
   // Función para validar el correo institucional
   const validarCorreoInstitucional = (correo) => {
-    return correo.endsWith('@unicatolica.edu.co');
+    return correo.endsWith('@ugmail.com');
   };
 
   // Función para validar la fecha de nacimiento
@@ -427,7 +426,7 @@ const App = () => {
         return false;
       }
       if (formData.tieneCorreoInstitucional === 'si' && !validarCorreoInstitucional(formData.correoInstitucional)) {
-        toast.error('El correo institucional debe ser @unicatolica.edu.co');
+        toast.error('El correo institucional debe ser @ugmail.com');
         return false;
       }
     }
@@ -1143,17 +1142,52 @@ const App = () => {
   };
 
   const handleAccesosFiltroChange = (e) => {
-    setAccesosFiltros({ ...accesosFiltros, [e.target.name]: e.target.value });
+    const nuevosFiltros = { ...accesosFiltros, [e.target.name]: e.target.value };
+    setAccesosFiltros(nuevosFiltros);
     setAccesosPage(1);
+    buscarEnHistorial('accesos', nuevosFiltros, 1, accesosLimit);
   };
 
-  // Función para obtener todos los accesos filtrados (sin paginación)
+  // Función unificada de búsqueda para historial
+  const buscarEnHistorial = async (tipo, filtros, pagina, limite) => {
+    try {
+      const endpoint = tipo === 'accesos' ? '/api/accesos' : '/api/personas';
+      const params = {
+        page: pagina,
+        limit: limite,
+        ...filtros
+      };
+
+      const response = await axios.get(`https://backend-coral-theta-21.vercel.app${endpoint}`, { params });
+      
+      if (tipo === 'accesos') {
+        setAccesos(response.data.accesos);
+        setAccesosTotal(response.data.total);
+      } else {
+        setPersonas(response.data.personas);
+        setPersonasTotal(response.data.total);
+      }
+    } catch (error) {
+      console.error(`Error al buscar ${tipo}:`, error);
+      if (tipo === 'accesos') {
+        setAccesos([]);
+        setAccesosTotal(0);
+      } else {
+        setPersonas([]);
+        setPersonasTotal(0);
+      }
+      toast.error(`Error al buscar ${tipo}`);
+    }
+  };
+
+  // Modificar las funciones de exportación para usar la nueva función
   const obtenerTodosAccesosFiltrados = async () => {
     setExportando(true);
     try {
-      const params = { ...accesosFiltros, page: 1, limit: 10000 };
-      const res = await axios.get("https://backend-coral-theta-21.vercel.app/api/accesos", { params });
-      return res.data.accesos;
+      const response = await axios.get("https://backend-coral-theta-21.vercel.app/api/accesos", {
+        params: { ...accesosFiltros, page: 1, limit: 10000 }
+      });
+      return response.data.accesos;
     } catch {
       toast.error("Error al obtener todos los accesos");
       return [];
@@ -1231,7 +1265,6 @@ const App = () => {
     setTipoExportacion(null);
   };
 
-  // Obtener personas con filtros y paginación
   const fetchPersonas = async () => {
     setPersonasLoading(true);
     try {
@@ -1247,19 +1280,21 @@ const App = () => {
     }
   };
 
-  // Filtros de personas
   const handlePersonasFiltroChange = (e) => {
-    setPersonasFiltros({ ...personasFiltros, [e.target.name]: e.target.value });
+    const nuevosFiltros = { ...personasFiltros, [e.target.name]: e.target.value };
+    setPersonasFiltros(nuevosFiltros);
     setPersonasPage(1);
+    buscarEnHistorial('personas', nuevosFiltros, 1, personasLimit);
   };
 
   // Obtener todas las personas filtradas (sin paginación)
   const obtenerTodasPersonasFiltradas = async () => {
     setExportando(true);
     try {
-      const params = { ...personasFiltros, page: 1, limit: 10000 };
-      const res = await axios.get("https://backend-coral-theta-21.vercel.app/api/personas", { params });
-      return res.data.personas;
+      const response = await axios.get("https://backend-coral-theta-21.vercel.app/api/personas", {
+        params: { ...personasFiltros, page: 1, limit: 10000 }
+      });
+      return response.data.personas;
     } catch {
       toast.error("Error al obtener todas las personas");
       return [];
