@@ -1494,6 +1494,12 @@ const App = () => {
         return;
       }
 
+      // Validar formato del correo
+      if (!forgotPasswordEmail.includes('@')) {
+        toast.error("Por favor ingrese un correo válido");
+        return;
+      }
+
       setIsSendingEmail(true);
       const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/forgot-password", {
         correoInstitucional: forgotPasswordEmail
@@ -1504,9 +1510,21 @@ const App = () => {
         setShowForgotPassword(false);
         setForgotPasswordEmail("");
         setForgotPasswordMessage("");
+      } else {
+        toast.error(response.data.message || "No se pudo procesar la solicitud");
       }
     } catch (error) {
-      toast.error(error.response?.data?.error || "Error al procesar la solicitud");
+      console.error("Error en recuperación de contraseña:", error);
+      if (error.response) {
+        // El servidor respondió con un código de error
+        toast.error(error.response.data.message || "Error al procesar la solicitud");
+      } else if (error.request) {
+        // La solicitud fue hecha pero no se recibió respuesta
+        toast.error("No se pudo conectar con el servidor");
+      } else {
+        // Error en la configuración de la solicitud
+        toast.error("Error al procesar la solicitud");
+      }
     } finally {
       setIsSendingEmail(false);
     }
