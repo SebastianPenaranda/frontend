@@ -277,6 +277,43 @@ const App = () => {
   const [showTokenInput, setShowTokenInput] = useState(false);
   const [tokenInput, setTokenInput] = useState("");
 
+  const handleRecuperarPassword = async () => {
+    setMensajeRecuperar("");
+    if (!correoRecuperar) {
+      setMensajeRecuperar("Por favor ingresa tu correo institucional.");
+      return;
+    }
+    try {
+      await axios.post("http://localhost:5000/recuperar-password", { correoInstitucional: correoRecuperar });
+      setMensajeRecuperar("Si el correo existe, recibirás un mensaje con instrucciones para restablecer tu contraseña.");
+    } catch (error) {
+      setMensajeRecuperar(error.response?.data?.error || "Error al solicitar recuperación.");
+    }
+  };
+  
+  const handleResetPassword = async () => {
+    setMensajeReset("");
+    if (!correoRecuperar || !tokenReset || !nuevaPassword) {
+      setMensajeReset("Completa todos los campos.");
+      return;
+    }
+    try {
+      await axios.post("http://localhost:5000/reset-password", {
+        correoInstitucional: correoRecuperar,
+        token: tokenReset,
+        nuevaPassword
+      });
+      setMensajeReset("Contraseña restablecida correctamente. Ya puedes iniciar sesión.");
+      setMostrarReset(false);
+      setMostrarRecuperar(false);
+      setCorreoRecuperar("");
+      setTokenReset("");
+      setNuevaPassword("");
+    } catch (error) {
+      setMensajeReset(error.response?.data?.error || "Error al restablecer la contraseña.");
+    }
+  };
+
   useEffect(() => {
     if (role === "lector") {
       fetchHuellas();
@@ -1542,43 +1579,7 @@ const App = () => {
     }
   };
 
-  const handleResetPassword = async () => {
-    try {
-      if (!newPassword || !confirmPassword) {
-        toast.error("Por favor complete todos los campos");
-        return;
-      }
-
-      if (newPassword !== confirmPassword) {
-        toast.error("Las contraseñas no coinciden");
-        return;
-      }
-
-      if (newPassword.length < 6) {
-        toast.error("La contraseña debe tener al menos 6 caracteres");
-        return;
-      }
-
-      const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/reset-password", {
-        correoInstitucional: forgotPasswordEmail,
-        token: resetToken,
-        newPassword: newPassword
-      });
-
-      if (response.data.success) {
-        toast.success("Contraseña actualizada exitosamente");
-        setShowResetPasswordForm(false);
-        setShowForgotPassword(false);
-        setResetToken("");
-        setNewPassword("");
-        setConfirmPassword("");
-        setForgotPasswordEmail("");
-        setForgotPasswordMessage("");
-      }
-    } catch (error) {
-      toast.error("Error al restablecer la contraseña. Por favor intente nuevamente");
-    }
-  };
+  
 
   return (
     <div className="app-container">
