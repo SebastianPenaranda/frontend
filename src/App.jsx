@@ -237,6 +237,9 @@ const App = () => {
   const [mostrarModalExportar, setMostrarModalExportar] = useState(false);
   const [tipoExportacion, setTipoExportacion] = useState(null); // 'excel' o 'pdf'
   const [exportando, setExportando] = useState(false);
+  const [mostrarModalImportar, setMostrarModalImportar] = useState(false);
+  const [archivoExcel, setArchivoExcel] = useState(null);
+  const [importando, setImportando] = useState(false);
 
   // Estado para historial de personas
   const [personas, setPersonas] = useState([]);
@@ -1452,6 +1455,46 @@ const App = () => {
     setTipoExportacionPersonas(null);
   };
 
+  // Función para manejar la importación de Excel
+  const handleImportarExcel = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setArchivoExcel(file);
+    setMostrarModalImportar(true);
+  };
+
+  // Función para procesar la importación
+  const procesarImportacion = async () => {
+    if (!archivoExcel) return;
+
+    setImportando(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', archivoExcel);
+
+      const response = await axios.post('https://backend-coral-theta-21.vercel.app/api/personas/importar', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      if (response.data.success) {
+        toast.success('Importación exitosa');
+        fetchPersonas(); // Actualizar la lista de personas
+      } else {
+        toast.error(response.data.error || 'Error en la importación');
+      }
+    } catch (error) {
+      toast.error('Error al importar el archivo');
+      console.error('Error:', error);
+    } finally {
+      setImportando(false);
+      setMostrarModalImportar(false);
+      setArchivoExcel(null);
+    }
+  };
+
   return (
     <div className="app-container">
       {loggedIn && <Header className="app-header"/>}
@@ -2515,6 +2558,7 @@ const App = () => {
                     <button onClick={fetchPersonas}>Buscar</button>
                     <button onClick={() => { setTipoExportacionPersonas('excel'); setMostrarModalExportar(true); }} style={{background:'#28a745'}}>Exportar Excel</button>
                     <button onClick={() => { setTipoExportacionPersonas('pdf'); setMostrarModalExportar(true); }} style={{background:'#dc3545'}}>Exportar PDF</button>
+                    <button onClick={() => setMostrarModalImportar(true)} style={{background:'#17a2b8'}}>Importar Excel</button>
                   </div>
                   <div className="historial-tabla-container">
                     {personasLoading ? (
@@ -2659,6 +2703,35 @@ const App = () => {
                   disabled={exportando}
                 >
                   Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {mostrarModalImportar && (
+          <div className="modal-confirm-bg">
+            <div className="modal-confirm-box">
+              <h3 className="modal-confirm-title">Importar Excel</h3>
+              <p className="modal-confirm-msg">Por favor seleccione un archivo Excel para importar.</p>
+              <input
+                type="file"
+                onChange={handleImportarExcel}
+                className="import-excel-input"
+              />
+              <div className="modal-confirm-btns">
+                <button
+                  onClick={() => setMostrarModalImportar(false)}
+                  className="modal-confirm-cancel"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={procesarImportacion}
+                  className="modal-confirm-delete"
+                  disabled={importando}
+                >
+                  Importar
                 </button>
               </div>
             </div>
