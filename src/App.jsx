@@ -285,7 +285,7 @@ const App = () => {
       return;
     }
     try {
-      await axios.post("http://localhost:5000/recuperar-password", { correoInstitucional: forgotPasswordEmail });
+      await axios.post("https://frontend-jade-nine-61.vercel.app/api/recuperar-password", { correoInstitucional: forgotPasswordEmail });
       setMensajeRecuperar("Si el correo existe, recibirás un mensaje con instrucciones para restablecer tu contraseña.");
     } catch (error) {
       setMensajeRecuperar(error.response?.data?.error || "Error al solicitar recuperación.");
