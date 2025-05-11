@@ -5,6 +5,7 @@ const Header = ({ style }) => {
     const [Toggle, showMenu] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
     const [headerClass, setHeaderClass] = useState('');
+    const [showSupport, setShowSupport] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -28,6 +29,11 @@ const Header = ({ style }) => {
         };
     }, [lastScrollY]);
 
+    const handleLogout = () => {
+        // Aquí puedes agregar la lógica para cerrar sesión
+        window.location.href = '/';
+    };
+
     return (
         <header className={`header ${headerClass}`} style={style}>
             <nav className="nav container">
@@ -38,21 +44,31 @@ const Header = ({ style }) => {
                 <div className={Toggle ? "nav__menu show-menu" : "nav__menu"}>
                     <ul className="nav__list grid">
                         <li className="nav__item">
-                            <a href="index.html" className="nav__link active-link">
-                            <ion-icon class="nav__icon md hydrated" role="img" name="home-outline" title="Inicio" aria-label="Inicio"></ion-icon>
-                                Casa 
+                            <a href="#" onClick={handleLogout} className="nav__link active-link">
+                                <ion-icon class="nav__icon md hydrated" role="img" name="log-out-outline" title="Cerrar Sesión" aria-label="Cerrar Sesión"></ion-icon>
+                                Cerrar Sesión
                             </a>
                         </li>
                         <li className="nav__item">
-                            <a href="#Soporte" className="nav__link">
-                            <ion-icon class="nav__icon md hydrated" role="img" name="call-outline" title="Contacto" aria-label="Contacto"></ion-icon>
+                            <a href="#" onClick={(e) => { e.preventDefault(); setShowSupport(!showSupport); }} className="nav__link">
+                                <ion-icon class="nav__icon md hydrated" role="img" name="call-outline" title="Contacto" aria-label="Contacto"></ion-icon>
                                 Soporte
                             </a>
+                            {showSupport && (
+                                <div className="support-popup">
+                                    <p>¿Necesitas ayuda con la aplicación?</p>
+                                    <p>Nuestro equipo de soporte está disponible para ayudarte:</p>
+                                    <ul>
+                                        <li>+57 3052920641</li>
+                                        <li>+57 3202300182</li>
+                                        <li>+57 3107711775</li>
+                                    </ul>
+                                </div>
+                            )}
                         </li>
                     </ul>
 
                     <ion-icon class="nav__close md hydrated" role="img" name="close-outline" title="Cerrar menú" aria-label="Cerrar menú"></ion-icon>
-
                 </div>
 
                 <div className="nav__toggle" onClick={() => showMenu(!Toggle)}>
