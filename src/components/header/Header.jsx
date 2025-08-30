@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+
 import "./Header.css"
 
 const Header = ({ style, logout }) => {
