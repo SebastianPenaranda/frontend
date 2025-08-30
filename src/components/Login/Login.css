@@ -1,0 +1,301 @@
+/*======================================LOGIN===========================================*/
+
+/* ======= CONTENEDOR DEL LOGIN ======= */
+.contenedor_login {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  max-width: 350px;
+  width: 90%;
+  margin: 0 auto;
+  background: white;
+  min-height: 500px;
+}
+
+/* Título */
+.contenedor_login h1 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+/* ======= LABELS ======= */
+.contenedor_login label {
+  display: block;
+  text-align: left;
+  width: 100%;
+  max-width: 280px;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+/* ======= INPUTS Y SELECT ======= */
+.contenedor_login input,
+.contenedor_login select {
+  width: 100%;
+  max-width: 280px;
+  padding: 12px 15px;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.95rem;
+  background: #f8f9fa;
+  color: #333;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+/* Placeholder styles */
+.contenedor_login input::placeholder {
+  color: #999;
+  text-align: left;
+}
+
+/* Cambiar borde al hacer focus */
+.contenedor_login input:focus,
+.contenedor_login select:focus {
+  border-color: #6366f1;
+  background: white;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* ======= BOTONES ======= */
+.contenedor_login .login-btn,
+.contenedor_login .back-btn {
+  width: 100%;
+  max-width: 280px;
+  padding: 14px 16px;
+  font-size: 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  margin-bottom: 0.75rem;
+  color: white;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  background: #6366f1;
+}
+
+/* Botón Entrar */
+.contenedor_login .login-btn:hover {
+  background: #4f46e5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Botón Volver */
+.contenedor_login .back-btn:hover {
+  background: #4f46e5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Estados disabled */
+.contenedor_login button:disabled {
+  background: #9ca3af !important;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ======= ENLACE OLVIDÓ CONTRASEÑA ======= */
+.contenedor_login .forgot-password-link {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #6366f1;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  text-decoration: none;
+}
+
+.contenedor_login .forgot-password-link:hover {
+  color: #4f46e5;
+  text-decoration: underline;
+}
+
+/* ======= ESTILOS PARA EL MODAL DE RECUPERACIÓN ======= */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  color: #333;
+  text-align: center;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.modal-header h2 {
+  color: #333;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.modal-close {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.modal-body {
+  color: #333;
+}
+
+.modal-body p {
+  color: #666;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.modal-body input {
+  width: 100%;
+  padding: 12px 16px;
+  margin: 10px 0 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #333;
+  background: #f8f9fa;
+  box-sizing: border-box;
+}
+
+.modal-body input:focus {
+  border-color: #6366f1;
+  outline: none;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.modal-body input::placeholder {
+  color: #999;
+}
+
+/* Contenedor de botones del modal */
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.modal-body button {
+  flex: 1;
+  max-width: 140px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+/* Botón Cancelar */
+.modal-body .btn-cancel {
+  background: #6b7280;
+  color: white;
+}
+
+.modal-body .btn-cancel:hover {
+  background: #4b5563;
+}
+
+/* Botón Enviar Token */
+.modal-body .btn-primary {
+  background: #dc2626;
+  color: white;
+}
+
+.modal-body .btn-primary:hover {
+  background: #b91c1c;
+}
+
+.modal-body button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.mensaje-reset {
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.mensaje-reset.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.mensaje-reset.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* ======= RESPONSIVO ======= */
+@media screen and (max-width: 576px) {
+  .contenedor_login {
+    max-width: 90%;
+    padding: 1.5rem;
+  }
+
+  .contenedor_login h1 {
+    font-size: 1.75rem;
+  }
+
+  .contenedor_login input,
+  .contenedor_login button {
+    max-width: 100%;
+  }
+}
+
+/*=================================================================================*/

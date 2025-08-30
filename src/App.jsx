@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
+import Bienvenida from "./components/Bienvenida/Bienvenida";
+import Login from "./components/Login/Login";
+import PanelAdmin from "./components/PanelAdmin/PanelAdmin";
+import PanelLector from "./components/PanelLector/PanelLector";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as XLSX from "xlsx";
@@ -16,10 +20,15 @@ const ROLES_UNIVERSIDAD = [
 ];
 
 const CARRERAS_PREGRADO = [
-  // Carreras de Pregrado - Universitario
+  // Carreras Tecnológicas
+  "Tecnología en Desarrollo de Software",
+  "Tecnología en Gestión de Logística Empresarial",
+  "Tecnología en Gestión de Mercadeo",
+  
+  // Carreras Profesionales
   "Administración de Empresas",
   "Banca y Finanzas",
-  "Comunicación Social – Periodismo",
+  "Comunicación Social - Periodismo",
   "Contaduría Pública",
   "Derecho",
   "Estudios Políticos",
@@ -32,31 +41,30 @@ const CARRERAS_PREGRADO = [
   "Mercadeo",
   "Psicología",
   "Teología",
-  "Trabajo Social",
-  // Carreras de Pregrado - Tecnológico
-  "Tecnología en Desarrollo de Software",
-  "Tecnología en Gestión de Logística Empresarial",
-  "Tecnología en Gestión de Mercadeo"
+  "Trabajo Social"
 ];
 
 const CARRERAS_POSTGRADO = [
+  // Especializaciones
   "Educación en Derechos Humanos",
   "Educación y Sagrada Escritura",
   "Gerencia Estratégica",
   "Gerencia de Proyectos",
   "Gerencia del Talento Humano",
-  "Informática Educativa"
+  "Informática Educativa",
+  "Gerencia de la Innovación Organizacional"
+];
+
+const FACULTADES = [
+  "Ciencias Administrativas",
+  "Educación, Ciencias Sociales, Humanas y Derecho",
+  "Ingeniería"
 ];
 
 const DEPARTAMENTOS = [
-  "Ingeniería",
   "Ciencias Básicas",
-  "Humanidades",
-  "Administración",
-  "Derecho",
-  "Medicina",
-  "Psicología",
-  "Arquitectura"
+  "Comunicación y Lenguaje",
+  "Humanidades"
 ];
 
 const DEPENDENCIAS = [
@@ -161,28 +169,37 @@ const App = () => {
     semestre: "",
     tipoMatricula: "",
     programa: "",
+    estadoAcademico: "",
+    promedioAcademico: "",
+    perteneceSemillero: "",
+    nombreSemillero: "",
     
     // Profesor
     departamento: "",
     categoriaAcademica: "",
     horarioAtencion: "",
+    tipoVinculacion: "",
+    grupoInvestigacion: "",
+    perteneceSemilleroProfesor: "",
+    nombreSemilleroProfesor: "",
     
     // Personal Administrativo
     dependencia: "",
     cargo: "",
     telefonoInterno: "",
     turnoLaboral: "",
+    nivelJerarquico: "",
     
     // Investigador
-    grupoInvestigacion: "",
     orcid: "",
     proyectosActivos: [],
     
     // Egresado
-    anioGraduacion: "",
-    programaGrado: "",
+    carreraEgreso: "",
+    anoEgreso: "",
     tituloObtenido: "",
-    correoEgresado: "",
+    empresaActual: "",
+    cargoActual: "",
     
     // Visitante
     institucionProcedencia: "",
@@ -191,54 +208,38 @@ const App = () => {
     fechaFinVisita: "",
     
     // Colaborador Externo
-    empresaOrganizacion: "",
+    organizacion: "",
+    cargoOrganizacion: "",
     tipoColaboracion: "",
-    fechaInicioContrato: "",
-    fechaFinContrato: "",
+    areaColaboracion: "",
+    contactoReferencia: "",
+    duracionProyecto: "",
     
     // Personal de Servicios
-    area: "",
+    areaServicios: "",
+    tipoServicio: "",
     turno: "",
-    numeroEmpleado: "",
+    empresaContratista: "",
     
     // Becario / Pasante
+    tipoPrograma: "",
     programaBeca: "",
-    fechaInicioBeca: "",
-    fechaFinBeca: "",
-    dependenciaAsignada: "",
-    perteneceSemillero: "",
-    nombreSemillero: "",
-    tieneProyectoActivo: "",
-    nombreProyecto: ""
+    institucionOrigen: "",
+    proyectoAsignado: "",
+    supervisor: "",
+    fechaInicio: "",
+    fechaFinalizacion: ""
   });
   const [huellas, setHuellas] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
   const [registroEditando, setRegistroEditando] = useState(null);
   const [tipoFiltro, setTipoFiltro] = useState("todos");
   const [valorBusqueda, setValorBusqueda] = useState("");
-  const [busquedaCarnet, setBusquedaCarnet] = useState("");
-  const [personaEncontrada, setPersonaEncontrada] = useState(null);
-  const [mensajeError, setMensajeError] = useState("");
   const [registroAEliminar, setRegistroAEliminar] = useState(null);
   const [mostrarModalConfirmacion, setMostrarModalConfirmacion] = useState(false);
   const [registroEliminado, setRegistroEliminado] = useState(null);
   const [registroDetalle, setRegistroDetalle] = useState(null);
 
-  // Agregar estado para el formulario de visitante
-  const [visitanteForm, setVisitanteForm] = useState({
-    nombre: "",
-    apellido: "",
-    cedula: "",
-    razonVisita: "",
-    numeroTarjeta: ""
-  });
-
-  const [showVisitanteForm, setShowVisitanteForm] = useState(false);
-  const [passwordVerified, setPasswordVerified] = useState(false);
-  const [lectorPassword, setLectorPassword] = useState("");
-  const [ultimoAcceso, setUltimoAcceso] = useState(null);
-  const [tipoAcceso, setTipoAcceso] = useState(null);
-  const [horaAcceso, setHoraAcceso] = useState(null);
   const [edicionDesdeDetalle, setEdicionDesdeDetalle] = useState(false);
   const [adminHistorialTab, setAdminHistorialTab] = useState('accesos');
 
@@ -255,6 +256,15 @@ const App = () => {
   const [exportando, setExportando] = useState(false);
   const [mostrarModalImportar, setMostrarModalImportar] = useState(false);
   const [archivoExcel, setArchivoExcel] = useState(null);
+
+  // Estado para errores de validación en tiempo real
+  const [errores, setErrores] = useState({});
+  const [mostrarErrores, setMostrarErrores] = useState(false);
+  
+  // Estado para errores de validación del formulario de usuario
+  const [erroresUsuario, setErroresUsuario] = useState({});
+  const [mostrarErroresUsuario, setMostrarErroresUsuario] = useState(false);
+  
   const [importando, setImportando] = useState(false);
 
   // Estado para historial de personas
@@ -265,65 +275,13 @@ const App = () => {
   const [personasFiltros, setPersonasFiltros] = useState({ nombre: '', apellido: '', cedula: '', idInstitucional: '', rolUniversidad: '', carrera: '', correoInstitucional: '' });
   const [personasLoading, setPersonasLoading] = useState(false);
   const [tipoExportacionPersonas, setTipoExportacionPersonas] = useState(null);
-
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
-  const [forgotPasswordMessage, setForgotPasswordMessage] = useState("");
-  const [isSendingEmail, setIsSendingEmail] = useState(false);
-  const [showResetPasswordForm, setShowResetPasswordForm] = useState(false);
-  const [resetToken, setResetToken] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showTokenInput, setShowTokenInput] = useState(false);
-  const [tokenInput, setTokenInput] = useState("");
-  const [mensajeReset, setMensajeReset] = useState("");
-  const [mensajeRecuperar, setMensajeRecuperar] = useState("");
-  const [mostrarReset, setMostrarReset] = useState(false);
-  const [mostrarRecuperar, setMostrarRecuperar] = useState(false);
-
-  const handleRecuperarPassword = async () => {
-    setMensajeRecuperar("");
-    if (!forgotPasswordEmail) {
-      setMensajeRecuperar("Por favor ingresa tu correo institucional.");
-      return;
-    }
-    try {
-      await axios.post("https://backend-coral-theta-21.vercel.app/api/recuperar-password", { correoInstitucional: forgotPasswordEmail });
-      setMensajeRecuperar("Si el correo existe, recibirás un mensaje con instrucciones para restablecer tu contraseña.");
-    } catch (error) {
-      setMensajeRecuperar(error.response?.data?.error || "Error al solicitar recuperación.");
-    }
-  };
   
-  const handleResetPassword = async () => {
-    setMensajeReset("");
-    if (!forgotPasswordEmail || !tokenInput || !newPassword || !confirmPassword) {
-      setMensajeReset("Completa todos los campos.");
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setMensajeReset("Las contraseñas no coinciden.");
-      return;
-    }
-
-    try {
-      await axios.post("https://backend-coral-theta-21.vercel.app/api/reset-password", {
-        correoInstitucional: forgotPasswordEmail,
-        token: tokenInput,
-        nuevaPassword: newPassword
-      });
-      setMensajeReset("Contraseña restablecida correctamente. Ya puedes iniciar sesión.");
-      setMostrarReset(false);
-      setMostrarRecuperar(false);
-      setForgotPasswordEmail("");
-      setTokenInput("");
-      setNewPassword("");
-      setConfirmPassword("");
-    } catch (error) {
-      setMensajeReset(error.response?.data?.error || "Error al restablecer la contraseña.");
-    }
-  };
+  // Estados de carga para operaciones de autenticación
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [registerLoading, setRegisterLoading] = useState(false);
+  
+  // Estado de carga para registros de personas (vista principal)
+  const [registrosLoading, setRegistrosLoading] = useState(false);
 
   useEffect(() => {
     if (role === "lector") {
@@ -333,13 +291,19 @@ const App = () => {
 
   useEffect(() => {
     if (adminView === "historial" && adminHistorialTab === "accesos") {
-      buscarEnHistorial('accesos', accesosFiltros, accesosPage, accesosLimit);
+      const timer = setTimeout(() => {
+        buscarEnHistorial('accesos', accesosFiltros, accesosPage, accesosLimit);
+      }, 100); // Debounce de 100ms
+      return () => clearTimeout(timer);
     }
   }, [adminView, adminHistorialTab, accesosPage, accesosLimit]);
 
   useEffect(() => {
     if (adminView === "historial" && adminHistorialTab === "personas") {
-      buscarEnHistorial('personas', personasFiltros, personasPage, personasLimit);
+      const timer = setTimeout(() => {
+        buscarEnHistorial('personas', personasFiltros, personasPage, personasLimit);
+      }, 100); // Debounce de 100ms
+      return () => clearTimeout(timer);
     }
   }, [adminView, adminHistorialTab, personasPage, personasLimit]);
 
@@ -358,58 +322,82 @@ const App = () => {
       hora: "", 
       imagen: null,
       carnet: "",
+      
+      // Campos dinámicos actualizados
+      // Estudiante
       carrera: "",
       semestre: "",
       tipoMatricula: "",
       programa: "",
+      estadoAcademico: "",
+      promedioAcademico: "",
+      perteneceSemillero: "",
+      nombreSemillero: "",
+      
+      // Profesor
       departamento: "",
       categoriaAcademica: "",
       horarioAtencion: "",
+      tipoVinculacion: "",
+      grupoInvestigacion: "",
+      perteneceSemilleroProfesor: "",
+      nombreSemilleroProfesor: "",
+      
+      // Personal Administrativo
       dependencia: "",
       cargo: "",
       telefonoInterno: "",
       turnoLaboral: "",
-      grupoInvestigacion: "",
+      nivelJerarquico: "",
+      
+      // Investigador
       orcid: "",
       proyectosActivos: [],
-      anioGraduacion: "",
-      programaGrado: "",
+      
+      // Egresado
+      carreraEgreso: "",
+      anoEgreso: "",
       tituloObtenido: "",
-      correoEgresado: "",
+      empresaActual: "",
+      cargoActual: "",
+      
+      // Visitante
       institucionProcedencia: "",
       propositoVisita: "",
       fechaInicioVisita: "",
       fechaFinVisita: "",
-      empresaOrganizacion: "",
+      
+      // Colaborador Externo
+      organizacion: "",
+      cargoOrganizacion: "",
       tipoColaboracion: "",
-      fechaInicioContrato: "",
-      fechaFinContrato: "",
-      area: "",
+      areaColaboracion: "",
+      contactoReferencia: "",
+      duracionProyecto: "",
+      
+      // Personal de Servicios
+      areaServicios: "",
+      tipoServicio: "",
       turno: "",
-      numeroEmpleado: "",
+      empresaContratista: "",
+      
+      // Becario / Pasante
+      tipoPrograma: "",
       programaBeca: "",
-      fechaInicioBeca: "",
-      fechaFinBeca: "",
-      dependenciaAsignada: "",
-      perteneceSemillero: "",
-      nombreSemillero: "",
-      tieneProyectoActivo: "",
-      nombreProyecto: ""
-    });
-    setVisitanteForm({
-      nombre: "",
-      apellido: "",
-      cedula: "",
-      razonVisita: "",
-      numeroTarjeta: ""
+      institucionOrigen: "",
+      proyectoAsignado: "",
+      supervisor: "",
+      fechaInicio: "",
+      fechaFinalizacion: ""
     });
     setImagePreview(null);
-    setBusquedaCarnet("");
-    setPersonaEncontrada(null);
-    setMensajeError("");
     setRegistroEditando(null);
     setRegistroDetalle(null);
     setEdicionDesdeDetalle(false);
+    
+    // Limpiar errores de validación
+    setErrores({});
+    setMostrarErrores(false);
   };
 
   const handleMenuChange = (newMenu) => {
@@ -419,7 +407,7 @@ const App = () => {
 
   // Función para validar el correo institucional
   const validarCorreoInstitucional = (correo) => {
-    return correo.endsWith('@ugmail.com');
+    return correo.endsWith('@unicatolica.edu.co');
   };
 
   // Función para validar la fecha de nacimiento
@@ -427,6 +415,518 @@ const App = () => {
     const fechaNac = new Date(fecha);
     const hoy = new Date();
     return fechaNac <= hoy;
+  };
+
+  // Función para validar entrada solo numérica
+  const validarSoloNumeros = (valor) => {
+    return /^\d*$/.test(valor);
+  };
+
+  // Función para validar números decimales (promedio académico)
+  const validarNumerosDecimales = (valor) => {
+    return /^\d*\.?\d*$/.test(valor);
+  };
+
+  // Campos que solo deben aceptar números
+  const camposNumericos = [
+    'idInstitucional', 
+    'cedula', 
+    'carnet', 
+    'telefonoInterno', 
+    'semestre', 
+    'anoEgreso'
+  ];
+
+  // Campos que aceptan números decimales
+  const camposDecimales = [
+    // Array vacío ya que se eliminó promedioAcademico
+  ];
+
+  // Función para validar un campo específico
+  const validarCampo = (nombre, valor, formData) => {
+    let error = '';
+
+    switch (nombre) {
+      case 'nombre':
+        if (!valor.trim()) {
+          error = 'El nombre es obligatorio';
+        } else if (valor.trim().length < 2) {
+          error = 'El nombre debe tener al menos 2 caracteres';
+        } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(valor)) {
+          error = 'El nombre solo puede contener letras y espacios';
+        }
+        break;
+
+      case 'apellido':
+        if (!valor.trim()) {
+          error = 'El apellido es obligatorio';
+        } else if (valor.trim().length < 2) {
+          error = 'El apellido debe tener al menos 2 caracteres';
+        } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(valor)) {
+          error = 'El apellido solo puede contener letras y espacios';
+        }
+        break;
+
+      case 'fechaNacimiento':
+        if (!valor) {
+          error = 'La fecha de nacimiento es obligatoria';
+        } else if (!validarFechaNacimiento(valor)) {
+          error = 'La fecha de nacimiento no puede ser futura';
+        } else {
+          const hoy = new Date();
+          const fechaNac = new Date(valor);
+          let edad = hoy.getFullYear() - fechaNac.getFullYear();
+          const mesActual = hoy.getMonth();
+          const diaActual = hoy.getDate();
+          const mesNacimiento = fechaNac.getMonth();
+          const diaNacimiento = fechaNac.getDate();
+          
+          // Ajustar edad si aún no ha cumplido años este año
+          if (mesActual < mesNacimiento || (mesActual === mesNacimiento && diaActual < diaNacimiento)) {
+            edad--;
+          }
+          
+          // Determinar edad mínima según el rol
+          let edadMinima = 15; // Por defecto para estudiantes
+          const rolesAdultos = [
+            'Profesor / Docente',
+            'Personal Administrativo', 
+            'Personal de Servicios',
+            'Colaborador Externo'
+          ];
+          
+          if (rolesAdultos.includes(formData.rolUniversidad)) {
+            edadMinima = 18;
+          }
+          
+          if (edad < edadMinima) {
+            if (edadMinima === 18) {
+              error = `Para el rol seleccionado debe ser mayor de ${edadMinima} años`;
+            } else {
+              error = `Debe ser mayor de ${edadMinima} años`;
+            }
+          } else if (edad > 100) {
+            error = 'Verifique la fecha de nacimiento';
+          }
+        }
+        break;
+
+      case 'idInstitucional':
+        if (!valor.trim()) {
+          error = 'El ID institucional es obligatorio';
+        } else if (!validarSoloNumeros(valor)) {
+          error = 'El ID institucional solo puede contener números';
+        } else if (valor.length < 5 || valor.length > 15) {
+          error = 'El ID institucional debe tener entre 5 y 15 dígitos';
+        }
+        break;
+
+      case 'cedula':
+        if (!valor.trim()) {
+          error = 'La cédula es obligatoria';
+        } else if (!validarSoloNumeros(valor)) {
+          error = 'La cédula solo puede contener números';
+        } else if (valor.length < 7 || valor.length > 12) {
+          error = 'La cédula debe tener entre 7 y 12 dígitos';
+        }
+        break;
+
+      case 'rolUniversidad':
+        if (!valor.trim()) {
+          error = 'Debe seleccionar un rol universitario';
+        }
+        break;
+
+      case 'correoPersonal':
+        if (!valor.trim()) {
+          error = 'El correo personal es obligatorio';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor)) {
+          error = 'Ingrese un correo electrónico válido';
+        }
+        break;
+
+      case 'tieneCorreoInstitucional':
+        if (!valor) {
+          error = 'Debe indicar si tiene correo institucional';
+        }
+        break;
+
+      case 'correoInstitucional':
+        if (formData.tieneCorreoInstitucional === 'si') {
+          if (!valor.trim()) {
+            error = 'El correo institucional es obligatorio';
+          } else if (!validarCorreoInstitucional(valor)) {
+            error = 'El correo institucional debe terminar en @unicatolica.edu.co';
+          }
+        }
+        break;
+
+      case 'carnet':
+        if (!valor.trim()) {
+          error = 'El número de carnet es obligatorio';
+        } else if (!validarSoloNumeros(valor)) {
+          error = 'El carnet solo puede contener números';
+        } else if (valor.length < 6 || valor.length > 12) {
+          error = 'El carnet debe tener entre 6 y 12 dígitos';
+        }
+        break;
+
+      case 'anoEgreso':
+        if (formData.rolUniversidad === 'Egresado' && valor) {
+          if (!validarSoloNumeros(valor)) {
+            error = 'El año de egreso solo puede contener números';
+          } else {
+            const ano = parseInt(valor);
+            const anoActual = new Date().getFullYear();
+            if (ano < 1990 || ano > anoActual) {
+              error = `El año debe estar entre 1990 y ${anoActual}`;
+            }
+          }
+        }
+        break;
+
+      // Campos obligatorios por rol
+      case 'carrera':
+        if (formData.rolUniversidad === 'Estudiante' && !valor.trim()) {
+          error = 'La carrera es obligatoria para estudiantes';
+        }
+        break;
+
+      case 'semestre':
+        if (formData.rolUniversidad === 'Estudiante' && !valor.trim()) {
+          error = 'El semestre es obligatorio para estudiantes';
+        } else if (valor && !validarSoloNumeros(valor)) {
+          error = 'El semestre solo puede contener números';
+        } else if (valor && (parseInt(valor) < 1 || parseInt(valor) > 12)) {
+          error = 'El semestre debe estar entre 1 y 12';
+        }
+        break;
+
+      case 'departamento':
+        if (formData.rolUniversidad === 'Profesor / Docente' && !valor.trim()) {
+          error = 'El departamento es obligatorio para profesores';
+        }
+        break;
+
+      case 'dependencia':
+        if (formData.rolUniversidad === 'Personal Administrativo' && !valor.trim()) {
+          error = 'La dependencia es obligatoria para personal administrativo';
+        }
+        break;
+
+      case 'carreraEgreso':
+        if (formData.rolUniversidad === 'Egresado' && !valor.trim()) {
+          error = 'La carrera de egreso es obligatoria para egresados';
+        }
+        break;
+
+      case 'areaServicios':
+        if (formData.rolUniversidad === 'Personal de Servicios' && !valor.trim()) {
+          error = 'El área de servicios es obligatoria';
+        }
+        break;
+
+      case 'tipoPrograma':
+        if (formData.rolUniversidad === 'Becario / Pasante' && !valor.trim()) {
+          error = 'El tipo de programa es obligatorio';
+        }
+        break;
+
+      case 'organizacion':
+        if (formData.rolUniversidad === 'Colaborador Externo' && !valor.trim()) {
+          error = 'La organización es obligatoria';
+        }
+        break;
+
+      case 'perteneceSemillero':
+        if ((formData.rolUniversidad === 'Estudiante') && !valor) {
+          error = 'Debe indicar si pertenece a un semillero';
+        }
+        break;
+
+      case 'nombreSemillero':
+        if (formData.rolUniversidad === 'Estudiante' && formData.perteneceSemillero === 'si' && !valor.trim()) {
+          error = 'El nombre del semillero es obligatorio';
+        }
+        break;
+
+      case 'perteneceSemilleroProfesor':
+        if ((formData.rolUniversidad === 'Profesor / Docente') && !valor) {
+          error = 'Debe indicar si pertenece a un semillero';
+        }
+        break;
+
+      case 'nombreSemilleroProfesor':
+        if (formData.rolUniversidad === 'Profesor / Docente' && formData.perteneceSemilleroProfesor === 'si' && !valor.trim()) {
+          error = 'El nombre del semillero es obligatorio';
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    return error;
+  };
+
+  // Función para validar todos los campos del formulario
+  const validarFormulario = (formData) => {
+    const nuevosErrores = {};
+
+    // Campos básicos obligatorios
+    const camposBasicos = [
+      'nombre', 'apellido', 'fechaNacimiento', 'idInstitucional', 
+      'cedula', 'rolUniversidad', 'correoPersonal', 'tieneCorreoInstitucional', 'carnet'
+    ];
+
+    camposBasicos.forEach(campo => {
+      const error = validarCampo(campo, formData[campo], formData);
+      if (error) {
+        nuevosErrores[campo] = error;
+      }
+    });
+
+    // Validar correo institucional si es necesario
+    if (formData.tieneCorreoInstitucional === 'si') {
+      const error = validarCampo('correoInstitucional', formData.correoInstitucional, formData);
+      if (error) {
+        nuevosErrores.correoInstitucional = error;
+      }
+    }
+
+    // Validar campos específicos por rol
+    switch (formData.rolUniversidad) {
+      case 'Estudiante':
+        ['carrera', 'semestre', 'perteneceSemillero'].forEach(campo => {
+          const error = validarCampo(campo, formData[campo], formData);
+          if (error) {
+            nuevosErrores[campo] = error;
+          }
+        });
+        
+        // Validar nombre del semillero si pertenece a uno
+        if (formData.perteneceSemillero === 'si') {
+          const error = validarCampo('nombreSemillero', formData.nombreSemillero, formData);
+          if (error) {
+            nuevosErrores.nombreSemillero = error;
+          }
+        }
+        break;
+
+      case 'Profesor / Docente':
+        ['departamento', 'perteneceSemilleroProfesor'].forEach(campo => {
+          const error = validarCampo(campo, formData[campo], formData);
+          if (error) {
+            nuevosErrores[campo] = error;
+          }
+        });
+        
+        // Validar nombre del semillero si pertenece a uno
+        if (formData.perteneceSemilleroProfesor === 'si') {
+          const error = validarCampo('nombreSemilleroProfesor', formData.nombreSemilleroProfesor, formData);
+          if (error) {
+            nuevosErrores.nombreSemilleroProfesor = error;
+          }
+        }
+        break;
+
+      case 'Personal Administrativo':
+        ['dependencia'].forEach(campo => {
+          const error = validarCampo(campo, formData[campo], formData);
+          if (error) {
+            nuevosErrores[campo] = error;
+          }
+        });
+        break;
+
+      case 'Egresado':
+        ['carreraEgreso', 'anoEgreso'].forEach(campo => {
+          const error = validarCampo(campo, formData[campo], formData);
+          if (error) {
+            nuevosErrores[campo] = error;
+          }
+        });
+        break;
+
+      case 'Personal de Servicios':
+        ['areaServicios'].forEach(campo => {
+          const error = validarCampo(campo, formData[campo], formData);
+          if (error) {
+            nuevosErrores[campo] = error;
+          }
+        });
+        break;
+
+      case 'Becario / Pasante':
+        ['tipoPrograma'].forEach(campo => {
+          const error = validarCampo(campo, formData[campo], formData);
+          if (error) {
+            nuevosErrores[campo] = error;
+          }
+        });
+        break;
+
+      case 'Colaborador Externo':
+        ['organizacion'].forEach(campo => {
+          const error = validarCampo(campo, formData[campo], formData);
+          if (error) {
+            nuevosErrores[campo] = error;
+          }
+        });
+        break;
+    }
+
+    return nuevosErrores;
+  };
+
+  // Función para validar un campo específico del formulario de usuario
+  const validarCampoUsuario = (nombre, valor, userData) => {
+    let error = '';
+
+    switch (nombre) {
+      case 'nombre':
+        if (!valor.trim()) {
+          error = 'El nombre es obligatorio';
+        } else if (valor.trim().length < 2) {
+          error = 'El nombre debe tener al menos 2 caracteres';
+        } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(valor)) {
+          error = 'El nombre solo puede contener letras y espacios';
+        }
+        break;
+
+      case 'apellido':
+        if (!valor.trim()) {
+          error = 'El apellido es obligatorio';
+        } else if (valor.trim().length < 2) {
+          error = 'El apellido debe tener al menos 2 caracteres';
+        } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(valor)) {
+          error = 'El apellido solo puede contener letras y espacios';
+        }
+        break;
+
+      case 'fechaNacimiento':
+        if (!valor) {
+          error = 'La fecha de nacimiento es obligatoria';
+        } else if (!validarFechaNacimiento(valor)) {
+          error = 'La fecha de nacimiento no puede ser futura';
+        } else {
+          const hoy = new Date();
+          const fechaNac = new Date(valor);
+          let edad = hoy.getFullYear() - fechaNac.getFullYear();
+          const mesActual = hoy.getMonth();
+          const diaActual = hoy.getDate();
+          const mesNacimiento = fechaNac.getMonth();
+          const diaNacimiento = fechaNac.getDate();
+          
+          if (mesActual < mesNacimiento || (mesActual === mesNacimiento && diaActual < diaNacimiento)) {
+            edad--;
+          }
+          
+          // Los usuarios del sistema deben ser mayores de 18 años
+          if (edad < 18) {
+            error = 'Los usuarios del sistema deben ser mayores de 18 años';
+          } else if (edad > 100) {
+            error = 'Verifique la fecha de nacimiento';
+          }
+        }
+        break;
+
+      case 'idInstitucional':
+        if (!valor.trim()) {
+          error = 'El ID institucional es obligatorio';
+        } else if (!validarSoloNumeros(valor)) {
+          error = 'El ID institucional solo puede contener números';
+        } else if (valor.length < 5 || valor.length > 15) {
+          error = 'El ID institucional debe tener entre 5 y 15 dígitos';
+        }
+        break;
+
+      case 'cedula':
+        if (!valor.trim()) {
+          error = 'La cédula es obligatoria';
+        } else if (!validarSoloNumeros(valor)) {
+          error = 'La cédula solo puede contener números';
+        } else if (valor.length < 7 || valor.length > 12) {
+          error = 'La cédula debe tener entre 7 y 12 dígitos';
+        }
+        break;
+
+      case 'rolUniversidad':
+        if (!valor.trim()) {
+          error = 'Debe seleccionar un rol universitario';
+        }
+        break;
+
+      case 'correoPersonal':
+        if (!valor.trim()) {
+          error = 'El correo personal es obligatorio';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor)) {
+          error = 'Ingrese un correo electrónico válido';
+        }
+        break;
+
+      case 'correoInstitucional':
+        if (!valor.trim()) {
+          error = 'El correo institucional es obligatorio';
+        } else if (!validarCorreoInstitucional(valor)) {
+          error = 'El correo institucional debe terminar en @unicatolica.edu.co';
+        }
+        break;
+
+      case 'password':
+        if (!valor.trim()) {
+          error = 'La contraseña es obligatoria';
+        } else if (valor.length < 6) {
+          error = 'La contraseña debe tener al menos 6 caracteres';
+        }
+        break;
+
+      case 'role':
+        if (!valor.trim()) {
+          error = 'Debe seleccionar un rol en la aplicación';
+        }
+        break;
+
+      case 'departamento':
+        if (userData.rolUniversidad === 'Profesor / Docente' && !valor.trim()) {
+          error = 'El departamento es obligatorio para profesores';
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    return error;
+  };
+
+  // Función para validar todo el formulario de usuario
+  const validarFormularioUsuario = (userData) => {
+    const nuevosErrores = {};
+
+    // Campos básicos obligatorios para usuarios
+    const camposBasicos = [
+      'nombre', 'apellido', 'fechaNacimiento', 'idInstitucional', 
+      'cedula', 'rolUniversidad', 'correoPersonal', 'correoInstitucional', 
+      'password', 'role'
+    ];
+
+    camposBasicos.forEach(campo => {
+      const error = validarCampoUsuario(campo, userData[campo], userData);
+      if (error) {
+        nuevosErrores[campo] = error;
+      }
+    });
+
+    // Validar campos específicos por rol universitario
+    if (userData.rolUniversidad === 'Profesor / Docente') {
+      const error = validarCampoUsuario('departamento', userData.departamento, userData);
+      if (error) {
+        nuevosErrores.departamento = error;
+      }
+    }
+
+    return nuevosErrores;
   };
 
   // Función para validar campos requeridos
@@ -476,7 +976,7 @@ const App = () => {
         return false;
       }
       if (formData.tieneCorreoInstitucional === 'si' && !validarCorreoInstitucional(formData.correoInstitucional)) {
-        toast.error('El correo institucional debe ser @ugmail.com');
+        toast.error('El correo institucional debe ser @unicatolica.edu.co');
         return false;
       }
     }
@@ -484,53 +984,46 @@ const App = () => {
     // Validar campos según el rol
     switch (formData.rolUniversidad) {
       case 'Estudiante':
-        if (!formData.carrera || !formData.semestre || !formData.tipoMatricula || !formData.programa) {
+        if (!formData.carrera || !formData.semestre || !formData.estadoAcademico) {
           toast.error('Por favor complete todos los campos del estudiante');
-          return false;
-        }
-        // Validar campos adicionales solo si la respuesta es "sí"
-        if (formData.perteneceSemillero === 'si' && !formData.nombreSemillero) {
-          toast.error('Por favor ingrese el nombre del semillero');
-          return false;
-        }
-        if (formData.tieneProyectoActivo === 'si' && !formData.nombreProyecto) {
-          toast.error('Por favor ingrese el nombre del proyecto');
           return false;
         }
         break;
       case 'Profesor / Docente':
-        if (!formData.departamento || !formData.categoriaAcademica || !formData.horarioAtencion) {
+        if (!formData.departamento || !formData.categoriaAcademica || !formData.tipoVinculacion || !formData.horarioAtencion) {
           toast.error('Por favor complete todos los campos del profesor');
-          return false;
-        }
-        // Validar campos adicionales solo si la respuesta es "sí"
-        if (formData.perteneceSemillero === 'si' && !formData.nombreSemillero) {
-          toast.error('Por favor ingrese el nombre del semillero');
           return false;
         }
         break;
       case 'Personal Administrativo':
-        if (!formData.dependencia || !formData.cargo || !formData.telefonoInterno || !formData.turnoLaboral) {
+        if (!formData.dependencia || !formData.cargo || !formData.turnoLaboral || !formData.nivelJerarquico) {
           toast.error('Por favor complete todos los campos del personal administrativo');
           return false;
         }
         break;
       case 'Egresado':
-        if (!formData.anioGraduacion || !formData.programaGrado || !formData.tituloObtenido || !formData.correoEgresado) {
+        if (!formData.carreraEgreso || !formData.anoEgreso || !formData.tituloObtenido) {
           toast.error('Por favor complete todos los campos del egresado');
           return false;
         }
         break;
       case 'Personal de Servicios':
-        if (!formData.area || !formData.turno || !formData.numeroEmpleado) {
+        if (!formData.areaServicios || !formData.tipoServicio || !formData.turno) {
           toast.error('Por favor complete todos los campos del personal de servicios');
           return false;
         }
         break;
       case 'Becario / Pasante':
-        if (!formData.programaBeca || !formData.fechaInicioBeca || 
-            !formData.fechaFinBeca || !formData.dependenciaAsignada) {
+        if (!formData.tipoPrograma || !formData.programaBeca || !formData.institucionOrigen || 
+            !formData.supervisor || !formData.fechaInicio || !formData.fechaFinalizacion) {
           toast.error('Por favor complete todos los campos del becario/pasante');
+          return false;
+        }
+        break;
+      case 'Colaborador Externo':
+        if (!formData.tipoColaboracion || !formData.organizacion || !formData.cargoOrganizacion || 
+            !formData.areaColaboracion || !formData.contactoReferencia) {
+          toast.error('Por favor complete todos los campos del colaborador externo');
           return false;
         }
         break;
@@ -594,16 +1087,49 @@ const App = () => {
     // Si es el campo rolUniversidad, limpiar campos dinámicos
     if (name === 'rolUniversidad') {
       limpiarCamposDinamicos();
+      // Limpiar errores relacionados con campos dinámicos
+      setErrores(prev => {
+        const nuevosErrores = { ...prev };
+        // Limpiar errores de campos específicos de roles
+        Object.keys(nuevosErrores).forEach(key => {
+          if (!['nombre', 'apellido', 'fechaNacimiento', 'idInstitucional', 
+               'cedula', 'rolUniversidad', 'correoPersonal', 'tieneCorreoInstitucional', 
+               'correoInstitucional', 'carnet'].includes(key)) {
+            delete nuevosErrores[key];
+          }
+        });
+        return nuevosErrores;
+      });
     }
     
-    // Validación para campos numéricos
-    if (['carnet', 'cedula', 'semestre', 'idInstitucional'].includes(name)) {
-      // Solo permite números
-      if (value === '' || /^\d+$/.test(value)) {
-        setFormData(prev => ({ ...prev, [name]: value }));
+    let nuevoValor = value;
+    
+    // Validación para campos numéricos enteros
+    if (camposNumericos.includes(name)) {
+      if (value !== '' && !validarSoloNumeros(value)) {
+        return; // No actualizar si no es válido
       }
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      nuevoValor = value;
+    }
+    // Validación para campos numéricos decimales
+    else if (camposDecimales.includes(name)) {
+      if (value !== '' && !validarNumerosDecimales(value)) {
+        return; // No actualizar si no es válido
+      }
+      nuevoValor = value;
+    }
+    
+    // Actualizar el valor en formData
+    const nuevoFormData = { ...formData, [name]: nuevoValor };
+    setFormData(nuevoFormData);
+    
+    // Validar el campo en tiempo real si mostrarErrores está activado
+    if (mostrarErrores) {
+      const error = validarCampo(name, nuevoValor, nuevoFormData);
+      setErrores(prev => ({
+        ...prev,
+        [name]: error
+      }));
     }
   };
 
@@ -619,6 +1145,16 @@ const App = () => {
     setFormData(prev => ({ ...prev, proyectosActivos: selectedValues }));
   };
 
+  // Función para manejar validación cuando el usuario sale del campo (onBlur)
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const error = validarCampo(name, value, formData);
+    setErrores(prev => ({
+      ...prev,
+      [name]: error
+    }));
+  };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -630,21 +1166,67 @@ const App = () => {
   const handleAuthChange = (e) => {
     const { name, value } = e.target;
     
+    let nuevoValor = value;
+    
     // Validación para campos numéricos
-    if (['carnet', 'cedula', 'semestre', 'idInstitucional'].includes(name)) {
+    if (['cedula', 'idInstitucional'].includes(name)) {
       // Solo permite números
-      if (value === '' || /^\d+$/.test(value)) {
-        setUser({ ...user, [name]: value });
+      if (value !== '' && !/^\d+$/.test(value)) {
+        return; // No actualizar si no es válido
       }
-    } else {
-      setUser({ ...user, [name]: value });
+      nuevoValor = value;
+    }
+    
+    // Actualizar el valor en user
+    const nuevoUser = { ...user, [name]: nuevoValor };
+    setUser(nuevoUser);
+    
+    // Validar el campo en tiempo real si mostrarErroresUsuario está activado
+    if (mostrarErroresUsuario) {
+      const error = validarCampoUsuario(name, nuevoValor, nuevoUser);
+      setErroresUsuario(prev => ({
+        ...prev,
+        [name]: error
+      }));
     }
   };
 
+  // Función para manejar validación cuando el usuario sale del campo en el formulario de usuario
+  const handleAuthBlur = (e) => {
+    const { name, value } = e.target;
+    const error = validarCampoUsuario(name, value, user);
+    setErroresUsuario(prev => ({
+      ...prev,
+      [name]: error
+    }));
+  };
+
   const register = async () => {
+    if (registerLoading) return; // Prevenir clicks múltiples
+    
+    // Activar la visualización de errores
+    setMostrarErroresUsuario(true);
+    
+    // Validar todo el formulario
+    const erroresValidacion = validarFormularioUsuario(user);
+    setErroresUsuario(erroresValidacion);
+    
+    // Si hay errores, no enviar el formulario
+    if (Object.keys(erroresValidacion).length > 0) {
+      toast.error('Por favor, corrija los errores en el formulario antes de continuar');
+      setRegisterLoading(false);
+      return;
+    }
+    
+    setRegisterLoading(true);
     try {
-      await axios.post("https://backend-coral-theta-21.vercel.app/api/register", user);
-      toast.success("Usuario registrado");
+      toast.info("Registrando usuario...", { autoClose: 1000 });
+      
+      await axios.post("https://backend-coral-theta-21.vercel.app/api/register", user, {
+        timeout: 10000 // Timeout de 10 segundos
+      });
+      
+      toast.success("Usuario registrado exitosamente");
       setUser({ 
         nombre: "", 
         apellido: "", 
@@ -657,23 +1239,53 @@ const App = () => {
         password: "", 
         role: "lector" 
       });
+      
+      // Limpiar errores del formulario de usuario
+      setErroresUsuario({});
+      setMostrarErroresUsuario(false);
+      
       setAdminView("menu");
-    } catch {
-      toast.error("Error en el registro");
+    } catch (error) {
+      console.error("Error detallado en registro:", error);
+      
+      // Manejo específico de diferentes tipos de errores
+      if (error.code === 'ECONNABORTED') {
+        toast.error("Tiempo de espera agotado. Intente nuevamente.");
+      } else if (error.response?.status === 500) {
+        toast.error("Error del servidor. Por favor intente en unos momentos.");
+      } else if (error.response?.status === 400) {
+        toast.error(error.response.data?.error || "Datos inválidos. Verifique la información.");
+      } else if (error.response?.data?.error) {
+        toast.error(error.response.data.error);
+      } else if (!navigator.onLine) {
+        toast.error("Sin conexión a internet. Verifique su conexión.");
+      } else {
+        toast.error("Error de conexión. Verifique que el servidor esté disponible.");
+      }
+    } finally {
+      setRegisterLoading(false);
     }
   };
 
   const login = async () => {
+    if (loginLoading) return; // Prevenir clicks múltiples
+    
+    setLoginLoading(true);
     try {
       if (!user.correoInstitucional || !user.password || !user.role) {
         toast.error("Por favor complete todos los campos");
         return;
       }
 
+      // Mostrar indicador de carga
+      toast.info("Iniciando sesión...", { autoClose: 1000 });
+
       const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/login", {
         correoInstitucional: user.correoInstitucional,
         password: user.password,
         role: user.role
+      }, {
+        timeout: 10000 // Timeout de 10 segundos
       });
       
       if (response.data) {
@@ -685,7 +1297,26 @@ const App = () => {
         }
       }
     } catch (error) {
-      toast.error(error.response?.data?.error || "Error en el inicio de sesión");
+      console.error("Error detallado en login:", error);
+      
+      // Manejo específico de diferentes tipos de errores
+      if (error.code === 'ECONNABORTED') {
+        toast.error("Tiempo de espera agotado. Intente nuevamente.");
+      } else if (error.response?.status === 500) {
+        toast.error("Error del servidor. Por favor intente en unos momentos.");
+      } else if (error.response?.status === 401) {
+        toast.error("Credenciales incorrectas. Verifique su email y contraseña.");
+      } else if (error.response?.status === 404) {
+        toast.error("Usuario no encontrado.");
+      } else if (error.response?.data?.error) {
+        toast.error(error.response.data.error);
+      } else if (!navigator.onLine) {
+        toast.error("Sin conexión a internet. Verifique su conexión.");
+      } else {
+        toast.error("Error de conexión. Verifique que el servidor esté disponible.");
+      }
+    } finally {
+      setLoginLoading(false);
     }
   };
 
@@ -711,7 +1342,16 @@ const App = () => {
 
   const handleSubmit = async () => {
     try {
-      if (!validarCamposRequeridos()) {
+      // Activar la visualización de errores
+      setMostrarErrores(true);
+      
+      // Validar todo el formulario
+      const erroresValidacion = validarFormulario(formData);
+      setErrores(erroresValidacion);
+      
+      // Si hay errores, no enviar el formulario
+      if (Object.keys(erroresValidacion).length > 0) {
+        toast.error('Por favor, corrija los errores en el formulario antes de continuar');
         return;
       }
 
@@ -805,10 +1445,13 @@ const App = () => {
 
   const fetchHuellas = async () => {
     try {
+      setRegistrosLoading(true);
       const response = await axios.get("https://backend-coral-theta-21.vercel.app/api/huellas");
       setHuellas(response.data);
     } catch {
       toast.error("Error al obtener los datos");
+    } finally {
+      setRegistrosLoading(false);
     }
   };
 
@@ -1071,78 +1714,6 @@ const App = () => {
     }
   };
 
-  const buscarPorCarnet = async () => {
-    try {
-      if (!busquedaCarnet.trim()) {
-        setMensajeError("Por favor ingrese un número de carnet");
-        setPersonaEncontrada(null);
-        setUltimoAcceso(null);
-        setTipoAcceso(null);
-        setHoraAcceso(null);
-        return;
-      }
-
-      const response = await axios.get(`https://backend-coral-theta-21.vercel.app/api/buscar-carnet/${busquedaCarnet}`);
-      
-      if (response.data.persona) {
-        setPersonaEncontrada(response.data.persona);
-        setMensajeError("");
-        // Llamar a registrar-acceso automáticamente
-        try {
-          const accesoResp = await axios.post("https://backend-coral-theta-21.vercel.app/api/registrar-acceso", {
-            carnet: busquedaCarnet
-          });
-          setTipoAcceso(accesoResp.data.tipo);
-          setHoraAcceso(accesoResp.data.tipo === "entrada" ? accesoResp.data.acceso.horaEntrada : accesoResp.data.acceso.horaSalida);
-          setUltimoAcceso(accesoResp.data.acceso);
-          if (accesoResp.data.tipo === "entrada") {
-            toast.success("Entrada registrada: " + response.data.persona.nombre + " " + response.data.persona.apellido);
-          } else if (accesoResp.data.tipo === "salida") {
-            toast.info("Salida registrada: " + response.data.persona.nombre + " " + response.data.persona.apellido);
-          }
-        } catch (errAcceso) {
-          toast.error(errAcceso.response?.data?.error || "Error al registrar acceso");
-          setUltimoAcceso(null);
-          setTipoAcceso(null);
-          setHoraAcceso(null);
-        }
-      } else {
-        setPersonaEncontrada(null);
-        setUltimoAcceso(null);
-        setTipoAcceso(null);
-        setHoraAcceso(null);
-        setMensajeError("Persona no encontrada en la base de datos");
-      }
-      setBusquedaCarnet("");
-    } catch (error) {
-      console.error("Error al buscar:", error);
-      setPersonaEncontrada(null);
-      setUltimoAcceso(null);
-      setTipoAcceso(null);
-      setHoraAcceso(null);
-      setMensajeError("Error al buscar en la base de datos");
-      setBusquedaCarnet("");
-    }
-  };
-
-  // Agregar función para manejar el registro de visitante
-  const registrarVisitante = async () => {
-    try {
-      if (!visitanteForm.nombre || !visitanteForm.apellido || !visitanteForm.cedula || 
-          !visitanteForm.razonVisita || !visitanteForm.numeroTarjeta) {
-        toast.error("Por favor complete todos los campos");
-        return;
-      }
-
-      const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/registrar-visitante", visitanteForm);
-      toast.success("Visitante registrado exitosamente");
-      limpiarTodosLosFormularios();
-    } catch (error) {
-      console.error("Error al registrar visitante:", error);
-      toast.error("Error al registrar visitante");
-    }
-  };
-
   // Función para normalizar el nombre del rol para la clase CSS
   const normalizarRolClase = (rol) => {
     if (!rol) return '';
@@ -1191,6 +1762,13 @@ const App = () => {
 
   // Función unificada de búsqueda para historial
   const buscarEnHistorial = async (tipo, filtros, pagina, limite) => {
+    // Activar estado de carga según el tipo
+    if (tipo === 'accesos') {
+      setAccesosLoading(true);
+    } else {
+      setPersonasLoading(true);
+    }
+
     try {
       const endpoint = tipo === 'accesos' ? '/api/accesos' : '/api/personas';
       const params = {
@@ -1217,7 +1795,17 @@ const App = () => {
         setPersonas([]);
         setPersonasTotal(0);
       }
-      toast.error(`Error al buscar ${tipo}`);
+      // Solo mostrar error si no es un error de cancelación o red
+      if (!error.code?.includes('ERR_CANCELED') && !error.message?.includes('canceled')) {
+        toast.error(`Error al buscar ${tipo}`);
+      }
+    } finally {
+      // Desactivar estado de carga según el tipo
+      if (tipo === 'accesos') {
+        setAccesosLoading(false);
+      } else {
+        setPersonasLoading(false);
+      }
     }
   };
 
@@ -1528,73 +2116,11 @@ const App = () => {
     }
   };
 
-  const handleForgotPassword = async () => {
-    try {
-      if (!forgotPasswordEmail) {
-        toast.error("Por favor ingrese su correo institucional");
-        return;
-      }
-
-      if (!forgotPasswordEmail.includes('@')) {
-        toast.error("Por favor ingrese un correo válido");
-        return;
-      }
-
-      setIsSendingEmail(true);
-      const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/forgot-password", {
-        correoInstitucional: forgotPasswordEmail
-      });
-
-      if (response.data.success) {
-        toast.success("Se ha enviado un token de verificación a su correo electrónico");
-        setShowTokenInput(true);
-        setForgotPasswordMessage("Por favor ingrese el token recibido en su correo electrónico");
-      } else {
-        toast.error(response.data.message || "No se pudo procesar la solicitud");
-      }
-    } catch (error) {
-      if (error.response?.status === 404) {
-        toast.error("El correo no está registrado en el sistema");
-      } else if (error.response?.status === 500) {
-        toast.error("Error en el servidor. Por favor intente más tarde");
-      } else {
-        toast.error("Error al procesar la solicitud. Por favor intente nuevamente");
-      }
-    } finally {
-      setIsSendingEmail(false);
-    }
-  };
-
-  const verifyToken = async () => {
-    try {
-      if (!tokenInput) {
-        toast.error("Por favor ingrese el token de verificación");
-        return;
-      }
-
-      const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/verify-token", {
-        correoInstitucional: forgotPasswordEmail,
-        token: tokenInput
-      });
-
-      if (response.data.success) {
-        setShowResetPasswordForm(true);
-        setShowTokenInput(false);
-        setResetToken(tokenInput);
-        toast.success("Token verificado correctamente");
-      } else {
-        toast.error("Token inválido o expirado");
-      }
-    } catch (error) {
-      toast.error("Error al verificar el token. Por favor intente nuevamente");
-    }
-  };
-
   
 
   return (
     <div className="app-container">
-      {loggedIn && <Header className="app-header"/>}
+      {loggedIn && <Header className="app-header" logout={logout}/>}
       <div className={`app-content ${!loggedIn ? 'no-header' : ''}`}>
         <ToastContainer 
           position={loggedIn ? "top-right" : "top-right"}
@@ -1604,1089 +2130,127 @@ const App = () => {
         />
 
         {menu === "inicio" && !loggedIn && (
-          <div className="contenedor_bienvenida">
-            <h1>Bienvenido al registro de personas de la Unicatolica</h1>
-            <h1 className="pance">Sede Pance</h1>
-            <p>Seleccione una opción:</p>
-            <button onClick={() => setMenu("login")}>Iniciar Sesión</button>
-          </div>
+          <Bienvenida onMenuChange={handleMenuChange} />
         )}
 
         {menu === "login" && !loggedIn && (
-          <div className="contenedor_login">
-            <h1>Iniciar Sesión</h1>
-            <label>Correo Institucional:</label>
-            <input type="email" name="correoInstitucional" placeholder="Ingrese su correo institucional" value={user.correoInstitucional} onChange={handleAuthChange} /><br />
-            <label>Contraseña:</label>
-            <input type="password" name="password" placeholder="Ingrese su contraseña" value={user.password} onChange={handleAuthChange} /><br />
-            <label>Rol en la Aplicación:</label>
-            <select 
-              name="role" 
-              value={user.role} 
-              onChange={handleAuthChange}
-              className="login-select"
-            >
-              <option value="admin">Administrador</option>
-              <option value="lector">Lector</option>
-            </select><br />
-            <button onClick={login}>Entrar</button>
-            <button onClick={() => handleMenuChange("inicio")}>Volver</button>
-            <div className="forgot-password-link">
-              <a href="#" onClick={(e) => { e.preventDefault(); setShowForgotPassword(true); }}>
-                ¿Olvidó su contraseña?
-              </a>
-            </div>
-          </div>
-        )}
-
-        {/* Modal de Olvidó su contraseña */}
-        {showForgotPassword && (
-          <div className="modal-confirm-bg">
-            <div className="modal-confirm-box">
-              <h2 className="modal-confirm-title">Recuperar Contraseña</h2>
-              {!showTokenInput && !showResetPasswordForm && (
-                <>
-                  <p className="modal-confirm-msg">
-                    Ingrese su correo institucional para recibir un token de verificación.
-                  </p>
-                  <input
-                    type="email"
-                    value={forgotPasswordEmail}
-                    onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                    placeholder="Correo institucional"
-                    className="forgot-password-input"
-                  />
-                  {forgotPasswordMessage && (
-                    <p className="forgot-password-message">{forgotPasswordMessage}</p>
-                  )}
-                  <div className="modal-confirm-btns">
-                    <button
-                      onClick={() => {
-                        setShowForgotPassword(false);
-                        setForgotPasswordEmail("");
-                        setForgotPasswordMessage("");
-                      }}
-                      className="modal-confirm-cancel"
-                      disabled={isSendingEmail}
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      onClick={handleForgotPassword}
-                      className="modal-confirm-delete"
-                      disabled={isSendingEmail}
-                    >
-                      Enviar Token
-                    </button>
-                  </div>
-                </>
-              )}
-
-              {showTokenInput && !showResetPasswordForm && (
-                <>
-                  <p className="modal-confirm-msg">
-                    Ingrese el token recibido en su correo electrónico.
-                  </p>
-                  <input
-                    type="text"
-                    value={tokenInput}
-                    onChange={(e) => setTokenInput(e.target.value)}
-                    placeholder="Token de verificación"
-                    className="forgot-password-input"
-                  />
-                  <div className="modal-confirm-btns">
-                    <button
-                      onClick={() => {
-                        setShowForgotPassword(false);
-                        setForgotPasswordEmail("");
-                        setForgotPasswordMessage("");
-                        setShowTokenInput(false);
-                        setTokenInput("");
-                      }}
-                      className="modal-confirm-cancel"
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      onClick={verifyToken}
-                      className="modal-confirm-delete"
-                    >
-                      Verificar Token
-                    </button>
-                  </div>
-                </>
-              )}
-
-              {showResetPasswordForm && (
-                <>
-                  <p className="modal-confirm-msg">
-                    Ingrese su nueva contraseña.
-                  </p>
-                  <input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Nueva contraseña"
-                    className="forgot-password-input"
-                  />
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirmar contraseña"
-                    className="forgot-password-input"
-                  />
-                  {mensajeReset && (
-                    <div className="mensaje-reset" style={{ color: mensajeReset.includes('correctamente') ? 'green' : 'red', margin: '10px 0' }}>
-                      {mensajeReset}
-                    </div>
-                  )}
-                  <div className="modal-confirm-btns">
-                    <button
-                      onClick={() => {
-                        setShowForgotPassword(false);
-                        setShowResetPasswordForm(false);
-                        setNewPassword("");
-                        setConfirmPassword("");
-                      }}
-                      className="modal-confirm-cancel"
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      onClick={handleResetPassword}
-                      className="modal-confirm-delete"
-                    >
-                      Cambiar Contraseña
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
+          <Login 
+            user={user}
+            onAuthChange={handleAuthChange}
+            onLogin={login}
+            onMenuChange={handleMenuChange}
+            loginLoading={loginLoading}
+          />
         )}
 
         {loggedIn && role === "admin" && (
-          <div className="contenedor_admin">
-            {adminView === "menu" && (
-              <>
-              <div className="panelAdministradorCuadro">
-                  <h1>Panel de Administrador</h1>
-                  <div className="admin-menu-btns">
-                    <button onClick={() => setAdminView("registro")} className="admin-menu-btn">
-                      <span></span> Registro de Personas
-                    </button>
-                    <button onClick={() => {
-                      setAdminView("ver_registros");
-                      fetchHuellas();
-                    }} className="admin-menu-btn">
-                      <span></span> Ver Registros
-                    </button>
-                    <button onClick={() => setAdminView("historial")} className="admin-menu-btn">
-                      <span></span> Historial
-                    </button>
-                    <button onClick={() => setAdminView("registrar_usuario")} className="admin-menu-btn">
-                      <span></span> Registrar Usuario
-                    </button>
-                    <button onClick={logout} className="admin-menu-btn admin-menu-btn-logout">
-                      <span></span> Cerrar Sesión
-                    </button>
-                  </div>
-              </div>
-              </>
-            )}
-
-            {adminView === "registrar_usuario" && (
-              <div className="panelRegistroCuadro">
-                <h1>Registro de Usuario</h1>
-                <div className="admin-form">
-                  <div className="form-section">
-                    <h2>Información Personal</h2>
-                    <label>Nombre:</label>
-                    <input type="text" name="nombre" placeholder="Ingrese el nombre" value={user.nombre} onChange={handleAuthChange} required /><br />
-                    <label>Apellido:</label>
-                    <input type="text" name="apellido" placeholder="Ingrese el apellido" value={user.apellido} onChange={handleAuthChange} required /><br />
-                    <label>Fecha de Nacimiento:</label>
-                    <input type="date" name="fechaNacimiento" value={user.fechaNacimiento} onChange={handleAuthChange} required /><br />
-                    <label>ID Institucional:</label>
-                    <input type="text" name="idInstitucional" placeholder="Ingrese el ID institucional" value={user.idInstitucional} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" required /><br />
-                    <label>Cédula:</label>
-                    <input type="text" name="cedula" placeholder="Ingrese el número de cédula" value={user.cedula} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" required /><br />
-                    <label>Rol en la Universidad:</label>
-                    <select name="rolUniversidad" value={user.rolUniversidad} onChange={handleAuthChange} required>
-                      <option value="">Seleccione un rol</option>
-                      {ROLES_REGISTRO_USUARIOS.map(rol => (
-                        <option key={rol} value={rol}>{rol}</option>
-                      ))}
-                    </select><br />
-                    <label>Correo Personal:</label>
-                    <input type="email" name="correoPersonal" placeholder="Ingrese el correo personal" value={user.correoPersonal} onChange={handleAuthChange} required /><br />
-                    <label>Correo Institucional:</label>
-                    <input type="email" name="correoInstitucional" placeholder="Ingrese el correo institucional" value={user.correoInstitucional} onChange={handleAuthChange} required /><br />
-                    <label>Contraseña:</label>
-                    <input type="password" name="password" placeholder="Ingrese la contraseña" value={user.password} onChange={handleAuthChange} required /><br />
-                    <label>Rol en la Aplicación:</label>
-                    <select name="role" value={user.role} onChange={handleAuthChange} required>
-                      <option value="">Seleccione un rol</option>
-                      <option value="admin">Administrador</option>
-                      <option value="lector">Lector</option>
-                    </select><br />
-
-                    {/* Campos específicos según el rol */}
-                    {user.rolUniversidad === 'Profesor / Docente' && (
-                      <>
-                        <label>Departamento / Facultad:</label>
-                        <select name="departamento" value={user.departamento} onChange={handleAuthChange} required>
-                          <option value="">Seleccione un departamento</option>
-                          {DEPARTAMENTOS.map(dep => (
-                            <option key={dep} value={dep}>{dep}</option>
-                          ))}
-                        </select><br />
-                        <label>Categoría Académica:</label>
-                        <select name="categoriaAcademica" value={user.categoriaAcademica} onChange={handleAuthChange} required>
-                          <option value="">Seleccione una categoría</option>
-                          <option value="Asistente">Asistente</option>
-                          <option value="Asociado">Asociado</option>
-                          <option value="Titular">Titular</option>
-                        </select><br />
-                        <label>Horario de Atención:</label>
-                        <select name="horarioAtencion" value={user.horarioAtencion} onChange={handleAuthChange} required>
-                          <option value="">Seleccione un horario</option>
-                          <option value="Mañana (8:00–12:00)">Mañana (8:00–12:00)</option>
-                          <option value="Tarde (13:00–17:00)">Tarde (13:00–17:00)</option>
-                          <option value="Mixto">Mixto</option>
-                        </select><br />
-                      </>
-                    )}
-
-                    {user.rolUniversidad === 'Personal Administrativo' && (
-                      <>
-                        <label>Dependencia:</label>
-                        <select name="dependencia" value={user.dependencia} onChange={handleAuthChange} required>
-                          <option value="">Seleccione una dependencia</option>
-                          {DEPENDENCIAS.map(dep => (
-                            <option key={dep} value={dep}>{dep}</option>
-                          ))}
-                        </select><br />
-                        <label>Cargo / Título del Puesto:</label>
-                        <input type="text" name="cargo" placeholder="Ingrese el cargo" value={user.cargo} onChange={handleAuthChange} required /><br />
-                        <label>Teléfono Interno:</label>
-                        <input type="text" name="telefonoInterno" placeholder="Ingrese el teléfono interno" value={user.telefonoInterno} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" required /><br />
-                        <label>Turno Laboral:</label>
-                        <select name="turnoLaboral" value={user.turnoLaboral} onChange={handleAuthChange} required>
-                          <option value="">Seleccione un turno</option>
-                          <option value="Mañana">Mañana</option>
-                          <option value="Tarde">Tarde</option>
-                          <option value="Jornada completa">Jornada completa</option>
-                        </select><br />
-                      </>
-                    )}
-
-                    {user.rolUniversidad === 'Seguridad' && (
-                      <>
-                        <label>Área:</label>
-                        <select name="area" value={user.area} onChange={handleAuthChange} required>
-                          <option value="">Seleccione un área</option>
-                          <option value="Entrada Principal">Entrada Principal</option>
-                          <option value="Salida Principal">Salida Principal</option>
-                          <option value="Estacionamiento">Estacionamiento</option>
-                          <option value="Patrullaje">Patrullaje</option>
-                        </select><br />
-                        <label>Turno:</label>
-                        <select name="turno" value={user.turno} onChange={handleAuthChange} required>
-                          <option value="">Seleccione un turno</option>
-                          <option value="Mañana">Mañana</option>
-                          <option value="Tarde">Tarde</option>
-                          <option value="Noche">Noche</option>
-                        </select><br />
-                        <label>Número de Empleado:</label>
-                        <input type="text" name="numeroEmpleado" placeholder="Ingrese el número de empleado" value={user.numeroEmpleado} onChange={handleAuthChange} pattern="\d*" inputMode="numeric" required /><br />
-                      </>
-                    )}
-                  </div>
-
-                  <div className="form-buttons">
-                    <button onClick={register} className="admin-btn-guardar">
-                      <span></span> Registrar Usuario
-                    </button>
-                    <button onClick={() => setAdminView("menu")} className="admin-btn-volver">
-                      <span>←</span> Volver
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {adminView === "registro" && (
-              <>
-                <div className="panelRegistroCuadro">
-                  <h1>{registroEditando ? "Editar Registro" : "Registro de Personas"}</h1>
-                  <div className="admin-form">
-                    {/* Campos base */}
-                    <div className="form-section">
-                      <h2>Información Personal</h2>
-                      <label>Nombre:</label>
-                      <input type="text" name="nombre" placeholder="Ingrese el nombre" value={formData.nombre} onChange={handleChange} required /><br />
-                      <label>Apellido:</label>
-                      <input type="text" name="apellido" placeholder="Ingrese el apellido" value={formData.apellido} onChange={handleChange} required /><br />
-                      <label>Fecha de Nacimiento:</label>
-                      <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleChange} required /><br />
-                      <label>ID Institucional:</label>
-                      <input type="text" name="idInstitucional" placeholder="Ingrese el ID institucional" value={formData.idInstitucional} onChange={handleChange} pattern="\d*" inputMode="numeric" required /><br />
-                      <label>Cédula:</label>
-                      <input type="text" name="cedula" placeholder="Ingrese el número de cédula" value={formData.cedula} onChange={handleChange} pattern="\d*" inputMode="numeric" required /><br />
-                      <label>Rol en la Universidad:</label>
-                      <select name="rolUniversidad" value={formData.rolUniversidad} onChange={handleChange} required>
-                        <option value="">Seleccione un rol</option>
-                        {ROLES_REGISTRO_PERSONAS.map(rol => (
-                          <option key={rol} value={rol}>{rol}</option>
-                        ))}
-                      </select><br />
-                      <label>Correo Personal:</label>
-                      <input type="email" name="correoPersonal" placeholder="Ingrese el correo personal" value={formData.correoPersonal} onChange={handleChange} required /><br />
-                      
-                      {/* Mostrar opción de correo institucional solo para roles específicos */}
-                      {['Estudiante', 'Profesor / Docente', 'Personal Administrativo', 'Egresado', 'Personal de Servicios', 'Becario / Pasante'].includes(formData.rolUniversidad) && (
-                        <>
-                          <label>¿Tiene correo institucional?</label>
-                          <select 
-                            name="tieneCorreoInstitucional" 
-                            value={formData.tieneCorreoInstitucional} 
-                            onChange={handleChange} 
-                            required
-                          >
-                            <option value="">Seleccione una opción</option>
-                            <option value="si">Sí</option>
-                            <option value="no">No</option>
-                          </select><br />
-                          
-                          {formData.tieneCorreoInstitucional === 'si' && (
-                            <>
-                    <label>Correo Institucional:</label>
-                              <input 
-                                type="email" 
-                                name="correoInstitucional" 
-                                placeholder="Ingrese el correo institucional" 
-                                value={formData.correoInstitucional} 
-                                onChange={handleChange} 
-                                required 
-                              /><br />
-                            </>
-                          )}
-                        </>
-                      )}
-                      
-                      {/* Mostrar número de carnet antes de los campos específicos para roles que no son visitante ni colaborador externo */}
-                      {!['Visitante', 'Colaborador Externo'].includes(formData.rolUniversidad) && (
-                        <>
-                          <label>Número de Carnet:</label>
-                          <input 
-                            type="password" 
-                            name="carnet" 
-                            placeholder="Ingrese el número de carnet" 
-                            value={formData.carnet} 
-                            onChange={handleChange} 
-                            pattern="\d*" 
-                            inputMode="numeric" 
-                            required 
-                          /><br />
-                        </>
-                      )}
-                      
-                      {/* Campos específicos según el rol */}
-                      {formData.rolUniversidad === 'Estudiante' && (
-                        <>
-                          <label>Programa:</label>
-                          <select name="programa" value={formData.programa} onChange={handleChange} required>
-                            <option value="">Seleccione un programa</option>
-                            <option value="Pregrado">Pregrado</option>
-                            <option value="Posgrado">Posgrado</option>
-                          </select><br />
-                          <label>Carrera:</label>
-                          <select name="carrera" value={formData.carrera} onChange={handleChange} required>
-                            <option value="">Seleccione una carrera</option>
-                            {formData.programa === 'Pregrado' 
-                              ? CARRERAS_PREGRADO.map(carrera => (
-                                  <option key={carrera} value={carrera}>{carrera}</option>
-                                ))
-                              : formData.programa === 'Posgrado'
-                              ? CARRERAS_POSTGRADO.map(carrera => (
-                                  <option key={carrera} value={carrera}>{carrera}</option>
-                                ))
-                              : null
-                            }
-                          </select><br />
-                          <label>Semestre:</label>
-                          <select name="semestre" value={formData.semestre} onChange={handleChange} required>
-                            <option value="">Seleccione un semestre</option>
-                            {[...Array(12)].map((_, i) => (
-                              <option key={i + 1} value={i + 1}>{i + 1}</option>
-                            ))}
-                          </select><br />
-                          <label>Tipo de Matrícula:</label>
-                          <select name="tipoMatricula" value={formData.tipoMatricula} onChange={handleChange} required>
-                            <option value="">Seleccione tipo de matrícula</option>
-                            <option value="Matrícula Ordinaria">Matrícula Ordinaria</option>
-                            <option value="Matrícula Extraordinaria">Matrícula Extraordinaria</option>
-                            <option value="Matrícula Extemporánea">Matrícula Extemporánea</option>
-                            <option value="Pago por ciclos">Pago por ciclos</option>
-                            <option value="Media matrícula">Media matrícula</option>
-                            <option value="Matrícula por créditos">Matrícula por créditos</option>
-                            <option value="Créditos adicionales">Créditos adicionales</option>
-                          </select><br />
-                          <label>¿Pertenece a algún semillero de investigación?</label>
-                          <select name="perteneceSemillero" value={formData.perteneceSemillero} onChange={handleChange} required>
-                            <option value="">Seleccione una opción</option>
-                            <option value="si">Sí</option>
-                            <option value="no">No</option>
-                          </select><br />
-                          {formData.perteneceSemillero === 'si' && (
-                            <>
-                              <label>Nombre del Semillero:</label>
-                              <input type="text" name="nombreSemillero" placeholder="Ingrese el nombre del semillero" value={formData.nombreSemillero} onChange={handleChange} required /><br />
-                            </>
-                          )}
-                          <label>¿Tiene algún proyecto activo?</label>
-                          <select name="tieneProyectoActivo" value={formData.tieneProyectoActivo} onChange={handleChange} required>
-                            <option value="">Seleccione una opción</option>
-                            <option value="si">Sí</option>
-                            <option value="no">No</option>
-                          </select><br />
-                          {formData.tieneProyectoActivo === 'si' && (
-                            <>
-                              <label>Nombre del Proyecto:</label>
-                              <input type="text" name="nombreProyecto" placeholder="Ingrese el nombre del proyecto" value={formData.nombreProyecto} onChange={handleChange} required /><br />
-                            </>
-                          )}
-                        </>
-                      )}
-
-                      {formData.rolUniversidad === 'Profesor / Docente' && (
-                        <>
-                          <label>Departamento / Facultad:</label>
-                          <select name="departamento" value={formData.departamento} onChange={handleChange} required>
-                            <option value="">Seleccione un departamento</option>
-                            {DEPARTAMENTOS.map(dep => (
-                              <option key={dep} value={dep}>{dep}</option>
-                            ))}
-                          </select><br />
-                          <label>Categoría Académica:</label>
-                          <select name="categoriaAcademica" value={formData.categoriaAcademica} onChange={handleChange} required>
-                            <option value="">Seleccione una categoría</option>
-                            <option value="Asistente">Asistente</option>
-                            <option value="Asociado">Asociado</option>
-                            <option value="Titular">Titular</option>
-                          </select><br />
-                          <label>Horario de Atención:</label>
-                          <select name="horarioAtencion" value={formData.horarioAtencion} onChange={handleChange} required>
-                            <option value="">Seleccione un horario</option>
-                            <option value="Mañana (8:00–12:00)">Mañana (8:00–12:00)</option>
-                            <option value="Tarde (13:00–17:00)">Tarde (13:00–17:00)</option>
-                            <option value="Mixto">Mixto</option>
-                          </select><br />
-                          <label>¿Pertenece a algún semillero de investigación?</label>
-                          <select name="perteneceSemillero" value={formData.perteneceSemillero} onChange={handleChange} required>
-                            <option value="">Seleccione una opción</option>
-                            <option value="si">Sí</option>
-                            <option value="no">No</option>
-                          </select><br />
-                          {formData.perteneceSemillero === 'si' && (
-                            <>
-                              <label>Nombre del Semillero:</label>
-                              <input type="text" name="nombreSemillero" placeholder="Ingrese el nombre del semillero" value={formData.nombreSemillero} onChange={handleChange} required /><br />
-                            </>
-                          )}
-                        </>
-                      )}
-
-                      {formData.rolUniversidad === 'Personal Administrativo' && (
-                        <>
-                          <label>Dependencia:</label>
-                          <select name="dependencia" value={formData.dependencia} onChange={handleChange} required>
-                            <option value="">Seleccione una dependencia</option>
-                            {DEPENDENCIAS.map(dep => (
-                              <option key={dep} value={dep}>{dep}</option>
-                            ))}
-                          </select><br />
-                          <label>Cargo / Título del Puesto:</label>
-                          <input type="text" name="cargo" placeholder="Ingrese el cargo" value={formData.cargo} onChange={handleChange} required /><br />
-                          <label>Teléfono Interno:</label>
-                          <input type="text" name="telefonoInterno" placeholder="Ingrese el teléfono interno" value={formData.telefonoInterno} onChange={handleChange} pattern="\d*" inputMode="numeric" required /><br />
-                          <label>Turno Laboral:</label>
-                          <select name="turnoLaboral" value={formData.turnoLaboral} onChange={handleChange} required>
-                            <option value="">Seleccione un turno</option>
-                            <option value="Mañana">Mañana</option>
-                            <option value="Tarde">Tarde</option>
-                            <option value="Jornada completa">Jornada completa</option>
-                          </select><br />
-                        </>
-                      )}
-
-                      {formData.rolUniversidad === 'Egresado' && (
-                        <>
-                          <label>Año de Graduación:</label>
-                          <select name="anioGraduacion" value={formData.anioGraduacion} onChange={handleChange} required>
-                            <option value="">Seleccione un año</option>
-                            {[...Array(11)].map((_, i) => (
-                              <option key={2015 + i} value={2015 + i}>{2015 + i}</option>
-                            ))}
-                          </select><br />
-                          <label>Programa de Grado:</label>
-                          <select name="programaGrado" value={formData.programaGrado} onChange={handleChange} required>
-                            <option value="">Seleccione un programa</option>
-                            <option value="Pregrado">Pregrado</option>
-                            <option value="Posgrado">Posgrado</option>
-                          </select><br />
-                          <label>Título Obtenido:</label>
-                          <input type="text" name="tituloObtenido" placeholder="Ingrese el título obtenido" value={formData.tituloObtenido} onChange={handleChange} required /><br />
-                          <label>Correo de Egresado:</label>
-                          <input type="email" name="correoEgresado" placeholder="Ingrese el correo de egresado" value={formData.correoEgresado} onChange={handleChange} required /><br />
-                        </>
-                      )}
-
-                      {formData.rolUniversidad === 'Personal de Servicios' && (
-                        <>
-                          <label>Área:</label>
-                          <select name="area" value={formData.area} onChange={handleChange} required>
-                            <option value="">Seleccione un área</option>
-                            {AREAS_SERVICIOS.map(area => (
-                              <option key={area} value={area}>{area}</option>
-                            ))}
-                          </select><br />
-                          <label>Turno:</label>
-                          <select name="turno" value={formData.turno} onChange={handleChange} required>
-                            <option value="">Seleccione un turno</option>
-                            <option value="Mañana">Mañana</option>
-                            <option value="Tarde">Tarde</option>
-                            <option value="Noche">Noche</option>
-                          </select><br />
-                          <label>Número de Empleado:</label>
-                          <input type="text" name="numeroEmpleado" placeholder="Ingrese el número de empleado" value={formData.numeroEmpleado} onChange={handleChange} pattern="\d*" inputMode="numeric" required /><br />
-                        </>
-                      )}
-
-                      {formData.rolUniversidad === 'Becario / Pasante' && (
-                        <>
-                          <label>Programa de Beca:</label>
-                          <select name="programaBeca" value={formData.programaBeca} onChange={handleChange} required>
-                            <option value="">Seleccione un programa</option>
-                            {PROGRAMAS_BECA.map(programa => (
-                              <option key={programa} value={programa}>{programa}</option>
-                            ))}
-                          </select><br />
-                          <label>Fecha Inicio de Beca:</label>
-                          <input type="date" name="fechaInicioBeca" value={formData.fechaInicioBeca} onChange={handleChange} required /><br />
-                          <label>Fecha Fin de Beca:</label>
-                          <input type="date" name="fechaFinBeca" value={formData.fechaFinBeca} onChange={handleChange} required /><br />
-                          <label>Dependencia Asignada:</label>
-                          <select name="dependenciaAsignada" value={formData.dependenciaAsignada} onChange={handleChange} required>
-                            <option value="">Seleccione una dependencia</option>
-                            {DEPENDENCIAS.map(dep => (
-                              <option key={dep} value={dep}>{dep}</option>
-                            ))}
-                          </select><br />
-                        </>
-                      )}
-
-                      {/* Mostrar número de carnet justo antes de la imagen para visitante y colaborador externo */}
-                      {['Visitante', 'Colaborador Externo'].includes(formData.rolUniversidad) && (
-                        <>
-                    <label>Número de Carnet:</label>
-                          <input 
-                            type="password" 
-                            name="carnet" 
-                            placeholder="Ingrese el número de carnet" 
-                            value={formData.carnet} 
-                            onChange={handleChange} 
-                            pattern="\d*" 
-                            inputMode="numeric" 
-                            required 
-                          /><br />
-                        </>
-                      )}
-
-                    <label>Imagen Rostro:</label>
-                      <input type="file" name="imagen" accept="image/*" onChange={handleFileChange} required /><br />
-                    {imagePreview && (
-                      <div className="admin-img-preview">
-                        <h4>Vista previa:</h4>
-                        <img src={imagePreview} alt="Vista previa" />
-                      </div>
-                    )}
-                    </div>
-
-                    <div className="form-buttons">
-                    <button onClick={registroEditando ? handleUpdate : handleSubmit}>
-                      {registroEditando ? "Actualizar Registro" : "Guardar Datos"}
-                    </button>
-                    <button onClick={() => {
-                      setRegistroEditando(null);
-                      setFormData({
-                        nombre: "",
-                        apellido: "",
-                        fechaNacimiento: "",
-                        idInstitucional: "",
-                        cedula: "",
-                        rolUniversidad: "",
-                        correoPersonal: "",
-                          tieneCorreoInstitucional: "",
-                        correoInstitucional: "",
-                        fecha: "",
-                        hora: "",
-                        imagen: null,
-                        carnet: "",
-                          ...Object.fromEntries(
-                            Object.keys(formData)
-                              .filter(key => !['nombre', 'apellido', 'fechaNacimiento', 'idInstitucional', 
-                                             'cedula', 'rolUniversidad', 'correoPersonal', 'correoInstitucional',
-                                             'fecha', 'hora', 'imagen', 'carnet'].includes(key))
-                              .map(key => [key, ""])
-                          )
-                      });
-                      setImagePreview(null);
-                      if (edicionDesdeDetalle) {
-                        setRegistroDetalle(registroEditando);
-                        setAdminView("ver_registros");
-                        setEdicionDesdeDetalle(false);
-                      } else {
-                        setAdminView("menu");
-                      }
-                    }}>Volver</button>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-
-
-              {adminView === "ver_registros" && !registroDetalle && (
-                <>
-                  <div className="panelVerRegistroCuadro">
-                    <div className="admin-registros-barra">
-                      <h1 className="admin-registros-titulo">Registros de Personas</h1>
-                      <div className="filtros-container">
-                        <div className="filtros-busqueda">
-                          <div className="admin-barra-filtro">
-                            <select
-                              value={tipoFiltro}
-                              onChange={(e) => {
-                                setTipoFiltro(e.target.value);
-                                setValorBusqueda("");
-                                setPaginaActual(1);
-                              }}
-                              className="admin-filtro-select"
-                            >
-                              <option value="todos">Todos los campos</option>
-                              <option value="idInstitucional">ID Institucional</option>
-                              <option value="cedula">Cédula</option>
-                              <option value="nombre">Nombre</option>
-                              <option value="apellido">Apellido</option>
-                              <option value="semestre">Semestre</option>
-                              <option value="rolUniversidad">Rol</option>
-                              <option value="carrera">Carrera</option>
-                            </select>
-                          </div>
-                          <div className="admin-barra-input">
-                            {tipoFiltro === "rolUniversidad" ? (
-                              <select
-                                value={valorBusqueda}
-                                onChange={(e) => {
-                                  setValorBusqueda(e.target.value);
-                                  setPaginaActual(1);
-                                }}
-                                className="admin-busqueda-input"
-                              >
-                                <option value="">Seleccione un rol</option>
-                                {ROLES_REGISTRO_PERSONAS.map(rol => (
-                                  <option key={rol} value={rol}>{rol}</option>
-                                ))}
-                              </select>
-                            ) : (
-                              <input
-                                type={tipoFiltro === "semestre" ? "number" : "text"}
-                                value={valorBusqueda}
-                                onChange={(e) => {
-                                  setValorBusqueda(e.target.value);
-                                  setPaginaActual(1);
-                                }}
-                                placeholder={obtenerPlaceholder()}
-                                className="admin-busqueda-input"
-                              />
-                            )}
-                          </div>
-                          {valorBusqueda && (
-                            <button
-                              onClick={() => {
-                                setValorBusqueda("");
-                                setPaginaActual(1);
-                              }}
-                              className="admin-busqueda-limpiar"
-                            >
-                              Limpiar
-                            </button>
-                          )}
-                        </div>
-                        <div className="filtros-registros">
-                          <label className="label-nowrap">Registros por página:</label>
-                          <input
-                            type="number"
-                            min="1"
-                            value={registrosPorPagina}
-                            onChange={(e) => {
-                              const value = parseInt(e.target.value);
-                              if (value > 0) {
-                                setRegistrosPorPagina(value);
-                                const maxPages = Math.ceil(filtrarRegistros(huellas).length / value);
-                                if (paginaActual > maxPages) {
-                                  setPaginaActual(maxPages);
-                                }
-                              }
-                            }}
-                            className="input-registros-pagina"
-                          />
-                        </div>
-                      </div>
-                      <div className="contador-container">
-                        <span>
-                          {filtrarRegistros(huellas).length} resultado(s) encontrado(s)
-                        </span>
-                        <span>
-                          Mostrando página {paginaActual} de {Math.ceil(filtrarRegistros(huellas).length / registrosPorPagina)}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="admin-registros-grid">
-                      {huellas.length > 0 ? (
-                        filtrarRegistros(huellas)
-                          .slice(indexPrimerRegistro, indexUltimoRegistro)
-                          .map((huella) => (
-                          <div key={huella._id} className="admin-registro-card">
-                            <div className="admin-card-btns">
-                              <button 
-                                onClick={() => handleEdit(huella)}
-                                className="admin-btn-editar"
-                              >
-                                <span>✎</span> Editar
-                              </button>
-                              <button 
-                                onClick={() => handleDelete(huella._id)}
-                                className="admin-btn-eliminar"
-                              >
-                                <span>🗑</span> Eliminar
-                              </button>
-                              <button
-                                onClick={() => setRegistroDetalle(huella)}
-                                className="admin-btn-verinfo"
-                              >
-                                <span>🔍</span> Ver Información
-                              </button>
-                            </div>
-                            <div className="admin-card-info">
-                              <div className="admin-card-row">
-                                <span className="admin-card-label">ID Institucional:</span>
-                                <span>{huella.idInstitucional}</span>
-                              </div>
-                              <div className="admin-card-row">
-                                <span className="admin-card-label">Nombre:</span>
-                                <span>{huella.nombre} {huella.apellido}</span>
-                              </div>
-                              <div className="admin-card-row">
-                                <span className="admin-card-label">Carrera:</span>
-                                <span>{huella.carrera}</span>
-                              </div>
-                              <div className="admin-card-row">
-                                <span className="admin-card-label">Rol Universitario:</span>
-                                <span>{huella.rolUniversidad}</span>
-                              </div>
-                              <div className="admin-card-row">
-                                <span className="admin-card-label">Semestre:</span>
-                                <span>{huella.semestre}</span>
-                              </div>
-                              <div className="admin-card-row">
-                                <span className="admin-card-label">Correo Institucional:</span>
-                                <span>{huella.correoInstitucional}</span>
-                              </div>
-                              {huella.imagen && (
-                                <div className="admin-card-img">
-                                  <img 
-                                    src={`https://backend-coral-theta-21.vercel.app/api/huellas/${huella._id}/imagen`} 
-                                    alt="Imagen de perfil"
-                                  />
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="admin-registros-vacio">
-                          <p>No hay registros disponibles</p>
-                        </div>
-                      )}
-                    </div>
-
-                    {huellas.length > 0 && (
-                      <div className="admin-paginacion">
-                        <button
-                          onClick={() => setPaginaActual(paginaActual > 1 ? paginaActual - 1 : 1)}
-                          disabled={paginaActual === 1}
-                          className="admin-paginacion-btn admin-paginacion-anterior"
-                        >
-                          <span>←</span> Anterior
-                        </button>
-                        <span className="admin-paginacion-info">
-                          Página {paginaActual} de {Math.ceil(huellas.length / registrosPorPagina)}
-                        </span>
-                        <button
-                          onClick={() => setPaginaActual(paginaActual < Math.ceil(huellas.length / registrosPorPagina) ? paginaActual + 1 : paginaActual)}
-                          disabled={paginaActual === Math.ceil(huellas.length / registrosPorPagina)}
-                          className="admin-paginacion-btn admin-paginacion-siguiente"
-                        >
-                          Siguiente <span>→</span>
-                        </button>
-                      </div>
-                    )}
-
-                    <div className="volver-menu-container">
-                      <button 
-                        onClick={() => setAdminView("menu")}
-                        className="admin-volver-btn"
-                      >
-                        <span>←</span> Volver al Menú
-                      </button>
-                    </div>
-                  </div>
-                  </>
-              )}
-
-              {/* Vista de detalle de registro */}
-              {adminView === "ver_registros" && registroDetalle && (
-                <div className="panelVerRegistroCuadro">
-                  <h2 style={{textAlign: 'center', marginBottom: '2rem', color: '#2c3e50', fontWeight: 700}}>Información Completa de la Persona</h2>
-                  <div className="detalle-persona-grid">
-                    {Object.entries(registroDetalle).map(([key, value]) => (
-                      key !== "_id" && key !== "__v" && (
-                        <div key={key} className="detalle-persona-row">
-                          <strong className="detalle-campo-label">{formatearCampo(key)}:</strong> 
-                          {key === 'imagen' && value ? (
-                            <img src={`https://backend-coral-theta-21.vercel.app/api/huellas/${registroDetalle._id}/imagen`} alt="Imagen de la persona" style={{maxWidth: '180px', maxHeight: '180px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', marginLeft: '10px'}} />
-                          ) : (
-                            <span className="detalle-campo-valor">{value || '-'}</span>
-                          )}
-                        </div>
-                      )
-                    ))}
-                  </div>
-                  <div className="detalle-persona-btns">
-                    <button onClick={() => setRegistroDetalle(null)} className="detalle-btn-volver">Volver</button>
-                    <button onClick={() => handleDelete(registroDetalle._id)} className="detalle-btn-eliminar">Eliminar</button>
-                    <button onClick={() => { setRegistroEditando(registroDetalle); setAdminView("registro"); setRegistroDetalle(null); setEdicionDesdeDetalle(true); }} className="detalle-btn-editar">Editar</button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+          <PanelAdmin 
+            adminView={adminView}
+            setAdminView={setAdminView}
+            user={user}
+            handleAuthChange={handleAuthChange}
+            register={register}
+            registerLoading={registerLoading}
+            logout={logout}
+            fetchHuellas={fetchHuellas}
+            ROLES_REGISTRO_USUARIOS={ROLES_REGISTRO_USUARIOS}
+            ROLES_REGISTRO_PERSONAS={ROLES_REGISTRO_PERSONAS}
+            DEPARTAMENTOS={DEPARTAMENTOS}
+            FACULTADES={FACULTADES}
+            DEPENDENCIAS={DEPENDENCIAS}
+            CARRERAS_PREGRADO={CARRERAS_PREGRADO}
+            CARRERAS_POSTGRADO={CARRERAS_POSTGRADO}
+            GRUPOS_INVESTIGACION={GRUPOS_INVESTIGACION}
+            PROYECTOS={PROYECTOS}
+            AREAS_SERVICIOS={AREAS_SERVICIOS}
+            PROGRAMAS_BECA={PROGRAMAS_BECA}
+            formData={formData}
+            handleChange={handleChange}
+            handleProyectosChange={handleProyectosChange}
+            handleFileChange={handleFileChange}
+            imagePreview={imagePreview}
+            registroEditando={registroEditando}
+            handleSubmit={handleSubmit}
+            handleUpdate={handleUpdate}
+            huellas={huellas}
+            registrosLoading={registrosLoading}
+            tipoFiltro={tipoFiltro}
+            setTipoFiltro={setTipoFiltro}
+            valorBusqueda={valorBusqueda}
+            setValorBusqueda={setValorBusqueda}
+            filtrarRegistros={filtrarRegistros}
+            obtenerPlaceholder={obtenerPlaceholder}
+            registrosPorPagina={registrosPorPagina}
+            setRegistrosPorPagina={setRegistrosPorPagina}
+            paginaActual={paginaActual}
+            setPaginaActual={setPaginaActual}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+            setRegistroDetalle={setRegistroDetalle}
+            registroDetalle={registroDetalle}
+            normalizarRolClase={normalizarRolClase}
+            formatearCampo={formatearCampo}
+            adminHistorialTab={adminHistorialTab}
+            setAdminHistorialTab={setAdminHistorialTab}
+            accesosFiltros={accesosFiltros}
+            handleAccesosFiltroChange={handleAccesosFiltroChange}
+            fetchAccesos={fetchAccesos}
+            setTipoExportacion={setTipoExportacion}
+            setMostrarModalExportar={setMostrarModalExportar}
+            accesosLoading={accesosLoading}
+            accesos={accesos}
+            accesosTotal={accesosTotal}
+            accesosPage={accesosPage}
+            setAccesosPage={setAccesosPage}
+            accesosLimit={accesosLimit}
+            setAccesosLimit={setAccesosLimit}
+            personasFiltros={personasFiltros}
+            handlePersonasFiltroChange={handlePersonasFiltroChange}
+            fetchPersonas={fetchPersonas}
+            setTipoExportacionPersonas={setTipoExportacionPersonas}
+            setMostrarModalImportar={setMostrarModalImportar}
+            personasLoading={personasLoading}
+            personas={personas}
+            personasTotal={personasTotal}
+            personasPage={personasPage}
+            setPersonasPage={setPersonasPage}
+            personasLimit={personasLimit}
+            setPersonasLimit={setPersonasLimit}
+            mostrarModalExportar={mostrarModalExportar}
+            tipoExportacion={tipoExportacion}
+            handleExportar={handleExportar}
+            exportando={exportando}
+            tipoExportacionPersonas={tipoExportacionPersonas}
+            handleExportarPersonas={handleExportarPersonas}
+            mostrarModalImportar={mostrarModalImportar}
+            archivoExcel={archivoExcel}
+            setArchivoExcel={setArchivoExcel}
+            procesarImportacion={procesarImportacion}
+            importando={importando}
+            mostrarModalConfirmacion={mostrarModalConfirmacion}
+            registroAEliminar={registroAEliminar}
+            confirmarEliminacion={confirmarEliminacion}
+            setMostrarModalConfirmacion={setMostrarModalConfirmacion}
+            setRegistroAEliminar={setRegistroAEliminar}
+            registroEliminado={registroEliminado}
+            deshacerEliminacion={deshacerEliminacion}
+            setRegistroEliminado={setRegistroEliminado}
+            edicionDesdeDetalle={edicionDesdeDetalle}
+            setEdicionDesdeDetalle={setEdicionDesdeDetalle}
+            errores={errores}
+            handleBlur={handleBlur}
+            mostrarErrores={mostrarErrores}
+            erroresUsuario={erroresUsuario}
+            handleAuthBlur={handleAuthBlur}
+            mostrarErroresUsuario={mostrarErroresUsuario}
+          />
+        )}
 
         {loggedIn && role === "lector" && (
-          <div className="contenedor_lector">
-            <h1 className="lector-titulo">Panel de Lector</h1>
-            <div className="lector-busqueda-box">
-              <div className="lector-busqueda-barra">
-                <input
-                  type="text"
-                  value={busquedaCarnet}
-                  onChange={(e) => setBusquedaCarnet(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      buscarPorCarnet();
-                    }
-                  }}
-                  placeholder="Escanee el carnet"
-                  className="lector-busqueda-input"
-                />
-                <div className="lector-busqueda-icon">🔍</div>
-                <button 
-                  onClick={() => setShowVisitanteForm(true)}
-                  className="visitante-btn"
-                >
-                  Registrar Visitante
-                </button>
-              </div>
-              {mensajeError && (
-                <div className="lector-error-msg">
-                  {mensajeError}
-                </div>
-              )}
-              {personaEncontrada && (
-                <div className="lector-persona-info">
-                  <h2 className="lector-persona-titulo">Información de la Persona</h2>
-                  <div className="lector-persona-grid">
-                    <div className="lector-persona-row">
-                      <strong>Nombre:</strong>
-                      <span>{personaEncontrada.nombre} {personaEncontrada.apellido}</span>
-                    </div>
-                    <div className="lector-persona-row">
-                      <strong>ID Institucional:</strong>
-                      <span>{personaEncontrada.idInstitucional}</span>
-                    </div>
-                    <div className="lector-persona-row">
-                      <strong>Rol:</strong>
-                      <span className={`rol-badge rol-${normalizarRolClase(personaEncontrada.rolUniversidad)}`}>
-                        {personaEncontrada.rolUniversidad}
-                      </span>
-                    </div>
-                    {ultimoAcceso && (
-                      <>
-                        <div className="lector-persona-row">
-                          <strong>Hora de entrada:</strong>
-                          <span>{ultimoAcceso.horaEntrada || '-'}</span>
-                        </div>
-                        <div className="lector-persona-row">
-                          <strong>Hora de salida:</strong>
-                          <span>{ultimoAcceso.horaSalida || '-'}</span>
-                        </div>
-                      </>
-                    )}
-                    {personaEncontrada.imagen && (
-                      <div className="lector-persona-img">
-                        <img
-                          src={`https://backend-coral-theta-21.vercel.app/api/huellas/${personaEncontrada._id}/imagen`}
-                          alt="Foto de la persona"
-                        />
-                      </div>
-                    )}
-                  </div>
-                  {tipoAcceso && horaAcceso && (
-                    <div className={`acceso-aviso acceso-${tipoAcceso}`}>
-                      {tipoAcceso === 'entrada' ? 'Entrada registrada a las ' : 'Salida registrada a las '}
-                      <strong>{horaAcceso}</strong>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Modal de verificación de contraseña */}
-            {showVisitanteForm && !passwordVerified && (
-              <div className="modal-confirm-bg">
-                <div className="modal-confirm-box">
-                  <h2 className="modal-confirm-title">Verificación de Contraseña</h2>
-                  <p className="modal-confirm-msg">Por favor ingrese su contraseña para acceder al formulario de registro de visitantes</p>
-                  <input
-                    type="password"
-                    value={lectorPassword}
-                    onChange={(e) => setLectorPassword(e.target.value)}
-                    placeholder="Contraseña"
-                    className="visitante-campos input"
-                  />
-                  <div className="modal-confirm-btns">
-                    <button 
-                      className="modal-confirm-cancel"
-                      onClick={() => {
-                        setShowVisitanteForm(false);
-                        setLectorPassword("");
-                      }}
-                    >
-                      Cancelar
-                    </button>
-                    <button 
-                      className="modal-confirm-delete"
-                      onClick={async () => {
-                        try {
-                          const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/verify-password", {
-                            correoInstitucional: user.correoInstitucional,
-                            password: lectorPassword
-                          });
-                          if (response.data.verified) {
-                            setPasswordVerified(true);
-                            setLectorPassword("");
-                          } else {
-                            toast.error("Contraseña incorrecta");
-                          }
-                        } catch (error) {
-                          toast.error("Error al verificar la contraseña");
-                        }
-                      }}
-                    >
-                      Verificar
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Formulario flotante de registro de visitante */}
-            {showVisitanteForm && passwordVerified && (
-              <div className="modal-confirm-bg">
-                <div className="modal-confirm-box visitante-form-modal">
-                  <h2 className="visitante-titulo">Registro de Visitante</h2>
-                  <div className="visitante-campos">
-                    <input
-                      type="text"
-                      placeholder="Nombre"
-                      value={visitanteForm.nombre}
-                      onChange={(e) => setVisitanteForm({...visitanteForm, nombre: e.target.value})}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Apellido"
-                      value={visitanteForm.apellido}
-                      onChange={(e) => setVisitanteForm({...visitanteForm, apellido: e.target.value})}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Cédula"
-                      value={visitanteForm.cedula}
-                      onChange={(e) => setVisitanteForm({...visitanteForm, cedula: e.target.value})}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Razón de visita"
-                      value={visitanteForm.razonVisita}
-                      onChange={(e) => setVisitanteForm({...visitanteForm, razonVisita: e.target.value})}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Número de tarjeta"
-                      value={visitanteForm.numeroTarjeta}
-                      onChange={(e) => setVisitanteForm({...visitanteForm, numeroTarjeta: e.target.value})}
-                    />
-                    <div className="modal-confirm-btns">
-                      <button 
-                        className="modal-confirm-cancel"
-                        onClick={() => {
-                          setShowVisitanteForm(false);
-                          setPasswordVerified(false);
-                          setVisitanteForm({
-                            nombre: "",
-                            apellido: "",
-                            cedula: "",
-                            razonVisita: "",
-                            numeroTarjeta: ""
-                          });
-                        }}
-                      >
-                        Cancelar
-                      </button>
-                      <button 
-                        className="modal-confirm-delete"
-                        onClick={registrarVisitante}
-                      >
-                        Registrar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <button 
-              onClick={logout}
-              className="lector-logout-btn"
-            >
-              Cerrar Sesión
-            </button>
-          </div>
+          <PanelLector
+            user={user}
+            logout={logout}
+          />
         )}
 
         {mostrarModalConfirmacion && (
@@ -2719,279 +2283,7 @@ const App = () => {
           </div>
         )}
 
-        {/* Vista de Historial */}
-        {adminView === "historial" && (
-          <div className="panelVerRegistroCuadro">
-            <h2 style={{textAlign: 'center', marginBottom: '2rem', color: '#2c3e50', fontWeight: 700}}>Historial</h2>
-            <div className="historial-tabs">
-              <button className={adminHistorialTab === 'accesos' ? 'historial-tab-active' : ''} onClick={() => setAdminHistorialTab('accesos')}>Accesos</button>
-              <button className={adminHistorialTab === 'personas' ? 'historial-tab-active' : ''} onClick={() => setAdminHistorialTab('personas')}>Personas</button>
-            </div>
-            <div className="historial-content">
-              {adminHistorialTab === 'accesos' && (
-                <div>
-                  <div className="historial-filtros">
-                    <input name="nombre" value={accesosFiltros.nombre} onChange={handleAccesosFiltroChange} placeholder="Nombre" />
-                    <select name="rolUniversidad" value={accesosFiltros.rolUniversidad} onChange={handleAccesosFiltroChange}>
-                      <option value="">Seleccione un rol</option>
-                      {ROLES_REGISTRO_PERSONAS.map(rol => (
-                        <option key={rol} value={rol}>{rol}</option>
-                      ))}
-                    </select>
-                    <input name="carnet" value={accesosFiltros.carnet} onChange={handleAccesosFiltroChange} placeholder="Carnet" />
-                    <input name="numeroTarjeta" value={accesosFiltros.numeroTarjeta} onChange={handleAccesosFiltroChange} placeholder="N° Tarjeta" />
-                    <input name="fecha" type="date" value={accesosFiltros.fecha} onChange={handleAccesosFiltroChange} placeholder="Fecha" />
-                    <select name="tipo" value={accesosFiltros.tipo} onChange={handleAccesosFiltroChange}>
-                      <option value="">Tipo</option>
-                      <option value="entrada">Entrada</option>
-                      <option value="salida">Salida</option>
-                    </select>
-                    <button onClick={fetchAccesos}>Buscar</button>
-                    <button onClick={() => { setTipoExportacion('excel'); setMostrarModalExportar(true); }} style={{background:'#28a745'}}>Exportar Excel</button>
-                    <button onClick={() => { setTipoExportacion('pdf'); setMostrarModalExportar(true); }} style={{background:'#dc3545'}}>Exportar PDF</button>
-                  </div>
-                  <div className="historial-tabla-container">
-                    {accesosLoading ? (
-                      <p>Cargando...</p>
-                    ) : (
-                      <table className="historial-tabla">
-                        <thead>
-                          <tr>
-                            <th>Nombre</th>
-                            <th>Rol</th>
-                            <th>Carnet</th>
-                            <th>N° Tarjeta</th>
-                            <th>Fecha</th>
-                            <th>Hora Entrada</th>
-                            <th>Hora Salida</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {accesos.length === 0 ? (
-                            <tr><td colSpan={7}>No hay registros</td></tr>
-                          ) : (
-                            accesos.map((a) => (
-                              <tr key={a._id}>
-                                <td>{a.nombre}</td>
-                                <td>{a.rolUniversidad}</td>
-                                <td>{a.carnet}</td>
-                                <td>{a.numeroTarjeta}</td>
-                                <td>{a.fecha}</td>
-                                <td>{a.horaEntrada || '-'}</td>
-                                <td>{a.horaSalida || '-'}</td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    )}
-                  </div>
-                  <div className="historial-paginacion">
-                    <button onClick={() => setAccesosPage(p => Math.max(1, p - 1))} disabled={accesosPage === 1}>Anterior</button>
-                    <span>Página {accesosPage} de {Math.ceil(accesosTotal / accesosLimit) || 1}</span>
-                    <button onClick={() => setAccesosPage(p => p + 1)} disabled={accesosPage >= Math.ceil(accesosTotal / accesosLimit)}>Siguiente</button>
-                    <select value={accesosLimit} onChange={e => { setAccesosLimit(Number(e.target.value)); setAccesosPage(1); }}>
-                      {[10, 20, 50, 100].map(n => <option key={n} value={n}>{n} por página</option>)}
-                    </select>
-                  </div>
-                </div>
-              )}
-              {adminHistorialTab === 'personas' && (
-                <div>
-                  <div className="historial-filtros">
-                    <input name="nombre" value={personasFiltros.nombre} onChange={handlePersonasFiltroChange} placeholder="Nombre" />
-                    <input name="apellido" value={personasFiltros.apellido} onChange={handlePersonasFiltroChange} placeholder="Apellido" />
-                    <input name="cedula" value={personasFiltros.cedula} onChange={handlePersonasFiltroChange} placeholder="Cédula" />
-                    <input name="idInstitucional" value={personasFiltros.idInstitucional} onChange={handlePersonasFiltroChange} placeholder="ID Institucional" />
-                    <select name="rolUniversidad" value={personasFiltros.rolUniversidad} onChange={handlePersonasFiltroChange}>
-                      <option value="">Seleccione un rol</option>
-                      {ROLES_REGISTRO_PERSONAS.map(rol => (
-                        <option key={rol} value={rol}>{rol}</option>
-                      ))}
-                    </select>
-                    <input name="correoInstitucional" value={personasFiltros.correoInstitucional} onChange={handlePersonasFiltroChange} placeholder="Correo Institucional" />
-                    <button onClick={fetchPersonas}>Buscar</button>
-                    <button onClick={() => { setTipoExportacionPersonas('excel'); setMostrarModalExportar(true); }} style={{background:'#28a745'}}>Exportar Excel</button>
-                    <button onClick={() => { setTipoExportacionPersonas('pdf'); setMostrarModalExportar(true); }} style={{background:'#dc3545'}}>Exportar PDF</button>
-                    <button onClick={() => setMostrarModalImportar(true)} style={{background:'#17a2b8'}}>Importar Excel</button>
-                  </div>
-                  <div className="historial-tabla-container">
-                    {personasLoading ? (
-                      <p>Cargando...</p>
-                    ) : (
-                      <table className="historial-tabla">
-                        <thead>
-                          <tr>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Cédula</th>
-                            <th>ID Institucional</th>
-                            <th>Rol en la Universidad</th>
-                            <th>Correo Institucional</th>
-                            <th>Carnet</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {personas.length === 0 ? (
-                            <tr><td colSpan={7}>No hay registros</td></tr>
-                          ) : (
-                            personas.map((p, idx) => (
-                              <tr key={p._id || idx}>
-                                <td>{p.nombre || '-'}</td>
-                                <td>{p.apellido || '-'}</td>
-                                <td>{p.cedula || '-'}</td>
-                                <td>{p.idInstitucional || '-'}</td>
-                                <td>{p.rolUniversidad || '-'}</td>
-                                <td>{p.correoInstitucional || '-'}</td>
-                                <td>{p.carnet || '-'}</td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    )}
-                  </div>
-                  <div className="historial-paginacion">
-                    <button onClick={() => setPersonasPage(p => Math.max(1, p - 1))} disabled={personasPage === 1}>Anterior</button>
-                    <span>Página {personasPage} de {Math.ceil(personasTotal / personasLimit) || 1}</span>
-                    <button onClick={() => setPersonasPage(p => p + 1)} disabled={personasPage >= Math.ceil(personasTotal / personasLimit)}>Siguiente</button>
-                    <select value={personasLimit} onChange={e => { setPersonasLimit(Number(e.target.value)); setPersonasPage(1); }}>
-                      {[10, 20, 50, 100].map(n => <option key={n} value={n}>{n} por página</option>)}
-                    </select>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="volver-menu-container">
-              <button 
-                onClick={() => setAdminView("menu")}
-                className="admin-volver-btn"
-              >
-                <span>←</span> Volver al Menú
-              </button>
-            </div>
-          </div>
-        )}
 
-        {/* Modal para elegir tipo de exportación (accesos o personas) */}
-        {mostrarModalExportar && (
-          <div className="modal-confirm-bg">
-            <div className="modal-confirm-box">
-              <h3 className="modal-confirm-title">¿Qué desea exportar?</h3>
-              <p className="modal-confirm-msg">Seleccione si desea exportar solo la página actual o todos los resultados filtrados.</p>
-              <div className="modal-confirm-btns">
-                {tipoExportacion === 'excel' && (
-                  <button
-                    onClick={() => handleExportar('pagina')}
-                    className="modal-confirm-delete"
-                    disabled={exportando}
-                  >
-                    Página actual (accesos)
-                  </button>
-                )}
-                {tipoExportacion === 'excel' && (
-                  <button
-                    onClick={() => handleExportar('todos')}
-                    className="modal-confirm-delete"
-                    disabled={exportando}
-                  >
-                    Todos los resultados filtrados (accesos)
-                  </button>
-                )}
-                {tipoExportacion === 'pdf' && (
-                  <button
-                    onClick={() => handleExportar('pagina')}
-                    className="modal-confirm-delete"
-                    disabled={exportando}
-                  >
-                    Página actual (accesos)
-                  </button>
-                )}
-                {tipoExportacion === 'pdf' && (
-                  <button
-                    onClick={() => handleExportar('todos')}
-                    className="modal-confirm-delete"
-                    disabled={exportando}
-                  >
-                    Todos los resultados filtrados (accesos)
-                  </button>
-                )}
-                {tipoExportacionPersonas === 'excel' && (
-                  <button
-                    onClick={() => handleExportarPersonas('pagina')}
-                    className="modal-confirm-delete"
-                    disabled={exportando}
-                  >
-                    Página actual (personas)
-                  </button>
-                )}
-                {tipoExportacionPersonas === 'excel' && (
-                  <button
-                    onClick={() => handleExportarPersonas('todos')}
-                    className="modal-confirm-delete"
-                    disabled={exportando}
-                  >
-                    Todos los resultados filtrados (personas)
-                  </button>
-                )}
-                {tipoExportacionPersonas === 'pdf' && (
-                  <button
-                    onClick={() => handleExportarPersonas('pagina')}
-                    className="modal-confirm-delete"
-                    disabled={exportando}
-                  >
-                    Página actual (personas)
-                  </button>
-                )}
-                {tipoExportacionPersonas === 'pdf' && (
-                  <button
-                    onClick={() => handleExportarPersonas('todos')}
-                    className="modal-confirm-delete"
-                    disabled={exportando}
-                  >
-                    Todos los resultados filtrados (personas)
-                  </button>
-                )}
-                <button
-                  onClick={() => { setMostrarModalExportar(false); setTipoExportacion(null); setTipoExportacionPersonas(null); }}
-                  className="modal-confirm-cancel"
-                  disabled={exportando}
-                >
-                  Cancelar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {mostrarModalImportar && (
-          <div className="modal-confirm-bg">
-            <div className="modal-confirm-box">
-              <h3 className="modal-confirm-title">Importar Excel</h3>
-              <p className="modal-confirm-msg">Por favor seleccione un archivo Excel para importar.</p>
-              <input
-                type="file"
-                onChange={handleImportarExcel}
-                className="import-excel-input"
-              />
-              <div className="modal-confirm-btns">
-                <button
-                  onClick={() => setMostrarModalImportar(false)}
-                  className="modal-confirm-cancel"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={procesarImportacion}
-                  className="modal-confirm-delete"
-                  disabled={importando}
-                >
-                  Importar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
       {loggedIn && <Footer />}
     </div>

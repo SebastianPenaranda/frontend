@@ -1,0 +1,982 @@
+/*====================================PERFIL ADMINISTRADOR=============================================*/
+
+.panelAdministradorCuadro {
+  max-height: 500px;
+  height: 450px;
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  background: var(--container-color);
+}
+
+.panelRegistroCuadro {
+  max-width: 900px;
+  width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  margin: 4rem auto;
+  background: var(--container-color);
+}
+
+/* ================= ADMIN MENU BUTTONS =================== */
+.admin-menu-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 320px;
+}
+
+/* ================= ADMIN FORM =================== */
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.admin-form input,
+.admin-form select,
+.admin-form button {
+  max-width: 280px;
+  padding: 8px;
+}
+.admin-form img {
+  margin-top: 8px;
+  max-width: 100px;
+  border-radius: var(--border-radius);
+}
+
+/* ================= ADMIN IMAGE PREVIEW =================== */
+.admin-img-preview {
+  margin-top: 10px;
+  text-align: center;
+}
+.admin-img-preview img {
+  width: 150px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+/* Título */
+.contenedor_admin h1 {
+  font-size: 2rem;
+  color: var(--title-color);
+  margin-bottom: var(--mb-1-5);
+  font-weight: var(--font-semi-bold);
+}
+
+/* ======= INPUTS ======= */
+.contenedor_admin input {
+  margin-bottom: var(--mb-1);
+  border-radius: var(--border-radius);
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  font-size: 1rem;
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--text-dark);
+  transition: border-color 0.3s ease;
+}
+
+/* Cambiar borde al hacer focus */
+.contenedor_admin input:focus {
+  border-color: var(--primary-color);
+  background: rgba(0, 0, 0, 0.15);
+  outline: none;
+}
+
+
+/* ======= IMAGEN DE VISTA PREVIA ======= */
+.contenedor_admin img {
+  width: 150px;
+  height: auto;
+  border-radius: 10px;
+  margin-top: 10px;
+  box-shadow: var(--shadow);
+}
+
+/* Estilos para el formulario de registro */
+.form-section {
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.form-section h2 {
+  font-size: 1.5rem;
+  color: var(--title-color);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.form-section label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.form-section input,
+.form-section select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  border-radius: var(--border-radius);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-dark);
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-section input:focus,
+.form-section select:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+.form-section select[multiple] {
+  min-height: 100px;
+}
+
+.form-section select[multiple] option {
+  padding: 5px;
+}
+
+.form-section select[multiple] option:checked {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Estilos para optgroup */
+.form-section optgroup {
+  font-weight: bold;
+  color: #333;
+  background-color: #f5f5f5;
+  padding: 5px;
+}
+
+.form-section optgroup option {
+  font-weight: normal;
+  color: #555;
+  background-color: white;
+  padding-left: 20px;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.form-buttons button {
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  font-size: var(--normal-font-size);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.form-buttons button:first-child {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.form-buttons button:last-child {
+  background-color: #6c757d;
+  color: white;
+}
+
+.form-buttons button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.form-buttons button:active {
+  transform: translateY(0);
+}
+
+/* ================= MODAL CONFIRMACION =================== */
+.modal-confirm-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-confirm-box {
+  background: var(--container-color);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.modal-confirm-title {
+  font-size: 1.5rem;
+  color: var(--title-color);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.modal-confirm-msg {
+  color: var(--text-color);
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.modal-confirm-btns {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.modal-confirm-cancel {
+  padding: 10px 20px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-confirm-cancel:hover {
+  background-color: #5a6268;
+}
+
+.modal-confirm-delete {
+  padding: 10px 20px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-confirm-delete:hover {
+  background-color: #c82333;
+}
+
+/* ======= RESPONSIVO ======= */
+@media screen and (max-width: 576px) {
+  .contenedor_admin {
+    max-width: 90%;
+    padding: 1.5rem;
+  }
+
+  .contenedor_admin h1 {
+    font-size: 1.75rem;
+  }
+
+  .contenedor_admin input {
+    max-width: 100%;
+  }
+
+  .panelAdministradorCuadro,
+  .panelRegistroCuadro {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .form-buttons {
+    flex-direction: column;
+  }
+}
+
+/*================== LOADING SPINNER ==================*/
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  min-height: 200px;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0.5rem 0;
+}
+
+.loading-subtext {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* ================= NUEVOS ESTILOS PARA REGISTROS DE PERSONAS =================== */
+
+.admin-registros-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-registros-titulo {
+  text-align: center;
+  color: #333;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.filtros-y-paginacion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+}
+
+.filtros-busqueda {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.filtro-select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.busqueda-input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  min-width: 200px;
+  color: #333;
+}
+
+.busqueda-input::placeholder {
+  color: #999;
+}
+
+.registros-por-pagina {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.pagina-input {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 60px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.resultados-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+  padding: 0 0.5rem;
+}
+
+.registros-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.registro-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.registro-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+
+.btn-card {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-editar {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-editar:hover {
+  background: #2563eb;
+}
+
+.btn-eliminar {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-eliminar:hover {
+  background: #dc2626;
+}
+
+.btn-ver-info {
+  background: #8b5cf6;
+  color: white;
+}
+
+.btn-ver-info:hover {
+  background: #7c3aed;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.card-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.card-field:last-child {
+  border-bottom: none;
+}
+
+.field-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.field-value {
+  color: #6b7280;
+  font-size: 0.9rem;
+  text-align: right;
+  max-width: 60%;
+  word-break: break-word;
+}
+
+.card-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.registro-imagen {
+  max-width: 100%;
+  max-height: 70px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.placeholder-image {
+  color: #9ca3af;
+  font-size: 2rem;
+}
+
+.no-registros {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem;
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+/* Loading container específico para la grid de registros */
+.registros-grid .loading-container {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .filtros-y-paginacion {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filtros-busqueda {
+    flex-direction: column;
+  }
+  
+  .busqueda-input {
+    min-width: auto;
+  }
+  
+  .registros-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .resultados-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .card-actions {
+    flex-direction: column;
+  }
+  
+  .card-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .field-value {
+    text-align: left;
+    max-width: 100%;
+  }
+}
+
+/* ================= NUEVOS ESTILOS PARA HISTORIAL =================== */
+
+.historial-titulo {
+  text-align: center;
+  color: #333;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0 0 2rem 0;
+}
+
+.historial-tabs {
+  width: 30%;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 2rem;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+}
+
+.historial-tabs button {
+  background: #7c83fd;
+  color: #fff;
+  border: none;
+  border-radius: 12px 12px 0 0;
+  padding: 10px 28px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  outline: none;
+  width: auto;
+}
+
+.historial-tab {
+  flex: 1;
+  padding: 12px 24px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.historial-tab:hover {
+  background: #e2e8f0;
+  color: #374151;
+}
+
+.historial-tab-active {
+  background: #6366f1 !important;
+  color: white !important;
+  box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
+  width: auto;
+}
+
+.historial-filtros-container {
+  background: #f5f5f5;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.filtros-fila {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.filtros-fila:last-of-type {
+  margin-bottom: 1.5rem;
+}
+
+.historial-input,
+.historial-select {
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #374151;
+  background: white;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  flex: 1;
+  min-width: 150px;
+}
+
+.historial-input:focus,
+.historial-select:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.historial-input::placeholder {
+  color: #9ca3af;
+}
+
+.historial-date {
+  color: #6b7280;
+}
+
+.btn-buscar {
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-buscar:hover {
+  background: #4f46e5;
+}
+
+.historial-export-buttons {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-top: 0.5rem;
+}
+
+.btn-export {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+.btn-excel {
+  background: #10b981;
+}
+
+.btn-excel:hover {
+  background: #059669;
+}
+
+.btn-pdf {
+  background: #ef4444;
+}
+
+.btn-pdf:hover {
+  background: #dc2626;
+}
+
+.btn-import {
+  background: #06b6d4;
+}
+
+.btn-import:hover {
+  background: #0891b2;
+}
+
+/* Responsive para historial */
+@media (max-width: 768px) {
+  .filtros-fila {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  
+  .historial-export-buttons {
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
+  .historial-tabs {
+    max-width: 100%;
+  }
+}
+
+/* ================= ESTILOS TABLA HISTORIAL =================== */
+
+.historial-tabla-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+
+.historial-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.historial-tabla th, .historial-tabla td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #ececec;
+  font-size: 1rem;
+}
+
+.historial-tabla th {
+  background: #f4f6fb;
+  color: #4f56c6;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.historial-tabla tr:last-child td {
+  border-bottom: none;
+}
+
+.historial-paginacion {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+  justify-content: flex-start;
+}
+
+.historial-paginacion button {
+  background: #7c83fd;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.historial-paginacion button:disabled {
+  background: #bfc0c0;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+.historial-paginacion select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #bfc0c0;
+  font-size: 1rem;
+  background: #f4f6fb;
+  color: #222;
+}
+
+.import-excel-input {
+  margin: 1rem 0;
+  padding: 0.5rem;
+  border: 1px solid #bfc0c0;
+  border-radius: 8px;
+  width: 100%;
+  background: #f4f6fb;
+}
+
+.import-excel-input::-webkit-file-upload-button {
+  background: #17a2b8;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-right: 1rem;
+}
+
+.import-excel-input::-webkit-file-upload-button:hover {
+  background: #138496;
+}
+
+/* ================= ESTILOS ADMIN BARRA INPUT =================== */
+
+.admin-barra-input select.admin-busqueda-input {
+  width: 100%;
+  height: 100%;
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-dark);
+  font-size: var(--normal-font-size);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.admin-barra-input select.admin-busqueda-input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(100, 108, 255, 0.2);
+}
+
+.admin-barra-input select.admin-busqueda-input option {
+  background: white;
+  color: var(--text-dark);
+  padding: 12px;
+}
+
+.admin-barra-input select.admin-busqueda-input:hover {
+  border-color: var(--primary-color);
+}
+
+/* ================= VOLVER AL MENÚ =================== */
+.volver-menu-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin-volver-btn {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: var(--normal-font-size);
+}
+
+.admin-volver-btn:hover {
+  background-color: var(--secondary-color);
+}
+
+.admin-btn-volver {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.admin-btn-volver:hover {
+  background-color: var(--secondary-color);
+}
+
+/*=================================================================================*/
