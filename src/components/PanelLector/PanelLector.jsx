@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import React, { useState, useRef, useEffect } from 'react';
-=======
-import React, { useState, useRef } from 'react';
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import './PanelLector.css';
@@ -18,11 +14,8 @@ const PanelLector = ({ user, logout }) => {
   const [ultimoAcceso, setUltimoAcceso] = useState(null);
   const [tipoAcceso, setTipoAcceso] = useState(null);
   const [horaAcceso, setHoraAcceso] = useState(null);
-<<<<<<< HEAD
   const [historialAccesos, setHistorialAccesos] = useState([]);
   const [historialDiario, setHistorialDiario] = useState({}); // Objeto que contendrá historial por carnet
-=======
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
   const [showVisitanteForm, setShowVisitanteForm] = useState(false);
   const [passwordVerified, setPasswordVerified] = useState(false);
   const [lectorPassword, setLectorPassword] = useState("");
@@ -35,7 +28,6 @@ const PanelLector = ({ user, logout }) => {
     numeroTarjeta: ""
   });
 
-<<<<<<< HEAD
   // useEffect para resetear registros de acceso a medianoche
   useEffect(() => {
     const resetearAMedianoche = () => {
@@ -87,8 +79,6 @@ const PanelLector = ({ user, logout }) => {
     return ahora.toTimeString().split(' ')[0].substring(0, 5);
   };
 
-=======
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
   // Función para normalizar la clase del rol
   const normalizarRolClase = (rol) => {
     return rol ? rol.toLowerCase().replace(/\s+/g, '-') : '';
@@ -114,7 +104,6 @@ const PanelLector = ({ user, logout }) => {
       const personaResp = await axios.get(`https://backend-coral-theta-21.vercel.app/api/buscar-carnet/${busquedaCarnet}`);
       setPersonaEncontrada(personaResp.data.persona);
       
-<<<<<<< HEAD
       // Intentar obtener historial de accesos del backend (opcional)
       try {
         const historialResp = await axios.get(`https://backend-coral-theta-21.vercel.app/api/historial-accesos/${busquedaCarnet}`);
@@ -131,15 +120,12 @@ const PanelLector = ({ user, logout }) => {
         setHistorialAccesos(historialPersona);
       }
       
-=======
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
       // Luego registrar el acceso
       try {
         const accesoResp = await axios.post("https://backend-coral-theta-21.vercel.app/api/registrar-acceso", {
           carnet: busquedaCarnet
         });
         
-<<<<<<< HEAD
         // Compatibilidad con ambas estructuras de respuesta:
         // Backend actual Vercel: {message, tipo, acceso}
         // Backend local/futuro: {success, tipo, acceso}
@@ -192,14 +178,6 @@ const PanelLector = ({ user, logout }) => {
           });
           
           toast.success(`${accesoResp.data.tipo.toUpperCase()} registrada exitosamente`);
-=======
-        if (accesoResp.data.success) {
-          setTipoAcceso(accesoResp.data.tipo);
-          setHoraAcceso(accesoResp.data.tipo === "entrada" ? accesoResp.data.acceso.horaEntrada : accesoResp.data.acceso.horaSalida);
-          setUltimoAcceso(accesoResp.data.acceso);
-          
-          toast.success(`${accesoResp.data.tipo} registrada exitosamente`);
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
         }
       } catch (accesoError) {
         console.error("Error al registrar acceso:", accesoError);
@@ -216,10 +194,7 @@ const PanelLector = ({ user, logout }) => {
       setPersonaEncontrada(null);
       setTipoAcceso(null);
       setHoraAcceso(null);
-<<<<<<< HEAD
       setHistorialAccesos([]); // Limpiar historial en caso de error
-=======
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
       if (error.response?.status === 404) {
         setMensajeError("Persona no encontrada");
         toast.error("Persona no encontrada");
@@ -249,14 +224,10 @@ const PanelLector = ({ user, logout }) => {
       
       const response = await axios.post("https://backend-coral-theta-21.vercel.app/api/registrar-visitante", visitanteForm);
       
-<<<<<<< HEAD
       console.log("Respuesta completa del servidor:", response.data);
       
       // Verificar éxito por success=true O por mensaje exitoso O por status 200
       if (response.data.success || response.data.message?.includes('exitosamente') || response.status === 200) {
-=======
-      if (response.data.success) {
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
         toast.success("Visitante registrado exitosamente");
         setVisitanteForm({
           nombre: "",
@@ -267,7 +238,6 @@ const PanelLector = ({ user, logout }) => {
         });
         setShowVisitanteForm(false);
         setPasswordVerified(false);
-<<<<<<< HEAD
         // Limpiar también el campo de búsqueda para evitar búsquedas accidentales
         setBusquedaCarnet("");
         // Asegurar que el foco regrese al input sin ejecutar búsqueda
@@ -278,14 +248,10 @@ const PanelLector = ({ user, logout }) => {
         }, 100);
       } else {
         console.log("Respuesta sin success=true:", response.data);
-=======
-      } else {
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
         toast.error("Error al registrar visitante");
       }
     } catch (error) {
       console.error("Error al registrar visitante:", error);
-<<<<<<< HEAD
       console.error("Detalles del error:", error.response?.data);
       
       // Si es un error de tarjeta duplicada, mostrar mensaje específico
@@ -302,9 +268,6 @@ const PanelLector = ({ user, logout }) => {
         // Error genérico
         toast.error("Error al registrar visitante");
       }
-=======
-      toast.error("Error al registrar visitante");
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
     }
   };
 
@@ -372,7 +335,6 @@ const PanelLector = ({ user, logout }) => {
                   {personaEncontrada.rolUniversidad}
                 </span>
               </div>
-<<<<<<< HEAD
               {/* Mostrar razón de visita solo si es visitante */}
               {personaEncontrada.rolUniversidad === "Visitante" && personaEncontrada.razonVisita && (
                 <div className="lector-persona-row">
@@ -380,8 +342,6 @@ const PanelLector = ({ user, logout }) => {
                   <span className="razon-visita">{personaEncontrada.razonVisita}</span>
                 </div>
               )}
-=======
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
               {ultimoAcceso && (
                 <>
                   <div className="lector-persona-row">
@@ -403,7 +363,6 @@ const PanelLector = ({ user, logout }) => {
                 </div>
               )}
             </div>
-<<<<<<< HEAD
             
             {tipoAcceso && horaAcceso && (
               <div className={`acceso-aviso acceso-${tipoAcceso}`}>
@@ -452,14 +411,6 @@ const PanelLector = ({ user, logout }) => {
                 </div>
               </div>
             )}
-=======
-            {tipoAcceso && horaAcceso && (
-              <div className={`acceso-aviso acceso-${tipoAcceso}`}>
-                {tipoAcceso === 'entrada' ? 'Entrada registrada a las ' : 'Salida registrada a las '}
-                <strong>{horaAcceso}</strong>
-              </div>
-            )}
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
           </div>
         )}
       </div>
@@ -476,13 +427,10 @@ const PanelLector = ({ user, logout }) => {
               onChange={(e) => setLectorPassword(e.target.value)}
               placeholder="Contraseña"
               className="visitante-campos input"
-<<<<<<< HEAD
               autoComplete="current-password"
               autoCorrect="off"
               autoCapitalize="off"
               spellCheck="false"
-=======
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
             />
             <div className="modal-confirm-btns">
               <button 
@@ -531,55 +479,40 @@ const PanelLector = ({ user, logout }) => {
                 placeholder="Nombre"
                 value={visitanteForm.nombre}
                 onChange={(e) => setVisitanteForm({...visitanteForm, nombre: e.target.value})}
-<<<<<<< HEAD
                 autoComplete="given-name"
                 data-form-type="visitor-registration"
-=======
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
               />
               <input
                 type="text"
                 placeholder="Apellido"
                 value={visitanteForm.apellido}
                 onChange={(e) => setVisitanteForm({...visitanteForm, apellido: e.target.value})}
-<<<<<<< HEAD
                 autoComplete="family-name"
                 data-form-type="visitor-registration"
-=======
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
               />
               <input
                 type="text"
                 placeholder="Cédula"
                 value={visitanteForm.cedula}
                 onChange={(e) => setVisitanteForm({...visitanteForm, cedula: e.target.value})}
-<<<<<<< HEAD
                 autoComplete="off"
                 data-form-type="visitor-registration"
-=======
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
               />
               <input
                 type="text"
                 placeholder="Razón de visita"
                 value={visitanteForm.razonVisita}
                 onChange={(e) => setVisitanteForm({...visitanteForm, razonVisita: e.target.value})}
-<<<<<<< HEAD
                 autoComplete="off"
                 data-form-type="visitor-registration"
-=======
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
               />
               <input
                 type="text"
                 placeholder="Número de tarjeta"
                 value={visitanteForm.numeroTarjeta}
                 onChange={(e) => setVisitanteForm({...visitanteForm, numeroTarjeta: e.target.value})}
-<<<<<<< HEAD
                 autoComplete="off"
                 data-form-type="visitor-registration"
-=======
->>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
               />
               <div className="modal-confirm-btns">
                 <button 
