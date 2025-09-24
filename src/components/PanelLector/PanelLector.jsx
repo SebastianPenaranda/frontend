@@ -28,18 +28,24 @@ const PanelLector = ({ user, logout }) => {
     numeroTarjeta: ""
   });
 
-  // useEffect para resetear registros de acceso a medianoche
+  // useEffect para resetear registros de acceso a medianoche (hora de Bogotá)
   useEffect(() => {
     const resetearAMedianoche = () => {
-      const ahora = new Date();
-      const mañana = new Date(ahora);
-      mañana.setDate(ahora.getDate() + 1);
-      mañana.setHours(0, 0, 0, 0); // Configurar a 00:00:00.000
+      // Obtener la hora actual en Bogotá
+      const ahoraBogota = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Bogota"}));
       
-      const tiempoHastaMedianoche = mañana.getTime() - ahora.getTime();
+      // Calcular medianoche del día siguiente en Bogotá
+      const mañanaBogota = new Date(ahoraBogota);
+      mañanaBogota.setDate(ahoraBogota.getDate() + 1);
+      mañanaBogota.setHours(0, 0, 0, 0);
+      
+      // Convertir de vuelta a hora local del sistema para el timeout
+      const mañanaLocal = new Date(mañanaBogota.toLocaleString("en-US"));
+      const ahoraLocal = new Date();
+      const tiempoHastaMedianoche = mañanaLocal.getTime() - ahoraLocal.getTime();
       
       const timeout = setTimeout(() => {
-        // Limpiar registros de acceso al llegar medianoche
+        // Limpiar registros de acceso al llegar medianoche de Bogotá
         setTipoAcceso(null);
         setHoraAcceso(null);
         setUltimoAcceso(null);
@@ -54,7 +60,7 @@ const PanelLector = ({ user, logout }) => {
         
         // Notificación opcional (comentada para no molestar de noche)
         // toast.info("Registros de acceso reiniciados para el nuevo día");
-      }, tiempoHastaMedianoche);
+      }, Math.max(tiempoHastaMedianoche, 1000)); // Mínimo 1 segundo para evitar problemas
       
       return timeout;
     };
@@ -67,17 +73,32 @@ const PanelLector = ({ user, logout }) => {
     };
   }, []);
 
-  // Función helper para obtener fecha actual en formato YYYY-MM-DD
+  // Función helper para obtener fecha actual en formato YYYY-MM-DD (Bogotá, Colombia UTC-5)
   const obtenerFechaActual = () => {
-    const ahora = new Date();
-    return ahora.toISOString().split('T')[0];
+    const fechaBogota = new Date().toLocaleDateString("en-CA", {
+      timeZone: "America/Bogota"
+    });
+    return fechaBogota; // Ya viene en formato YYYY-MM-DD
   };
 
-  // Función helper para obtener hora actual en formato HH:MM
+  // Función helper para obtener hora actual en formato HH:MM (Bogotá, Colombia UTC-5)
   const obtenerHoraActual = () => {
-    const ahora = new Date();
-    return ahora.toTimeString().split(' ')[0].substring(0, 5);
+    const horaBogota = new Date().toLocaleTimeString("en-US", {
+      timeZone: "America/Bogota",
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    return horaBogota; // Formato HH:MM sin segundos
   };
+
+  // Función de debug opcional para verificar zona horaria (descomentar si necesitas verificar)
+  // const debugHoraBogota = () => {
+  //   const ahora = new Date();
+  //   console.log("Hora del sistema:", ahora.toLocaleTimeString());
+  //   console.log("Hora de Bogotá:", obtenerHoraActual());
+  //   console.log("Fecha de Bogotá:", obtenerFechaActual());
+  // };
 
   // Función para normalizar la clase del rol
   const normalizarRolClase = (rol) => {
@@ -138,24 +159,31 @@ const PanelLector = ({ user, logout }) => {
           const fechaActual = obtenerFechaActual();
           const horaActual = obtenerHoraActual();
           
-          // Usar hora del backend si está disponible, sino usar hora actual
-          const horaParaMostrar = accesoResp.data.acceso 
-            ? (accesoResp.data.tipo === "entrada" ? accesoResp.data.acceso.horaEntrada : accesoResp.data.acceso.horaSalida)
-            : horaActual;
+          // Debug temporal para verificar la hora
+          console.log("Fecha actual (Bogotá):", fechaActual);
+          console.log("Hora actual (Bogotá):", horaActual);
+          console.log("Hora del sistema:", new Date().toLocaleTimeString());
+          
+          // Usar SIEMPRE la hora actual de Bogotá, no la del backend
+          // El backend puede estar en diferente zona horaria
+          const horaParaMostrar = horaActual;
+          
+          console.log("Hora que se va a mostrar:", horaParaMostrar);
             
           setHoraAcceso(horaParaMostrar);
-          setUltimoAcceso(accesoResp.data.acceso || {
+          setUltimoAcceso({
             fecha: fechaActual,
             horaEntrada: accesoResp.data.tipo === "entrada" ? horaActual : null,
             horaSalida: accesoResp.data.tipo === "salida" ? horaActual : null
           });
           
-          // Crear el nuevo acceso
+          // Crear el nuevo acceso con hora de Bogotá
+          const timestampBogota = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Bogota"}));
           const nuevoAcceso = {
             tipo: accesoResp.data.tipo,
             fecha: fechaActual,
             hora: horaParaMostrar,
-            timestamp: new Date()
+            timestamp: timestampBogota
           };
           
           // Actualizar historial diario por persona
@@ -382,7 +410,7 @@ const PanelLector = ({ user, logout }) => {
             {historialAccesos.length > 0 && (
               <div className="historial-accesos">
                 <h3 className="historial-titulo">
-                  Historial del Día ({obtenerFechaActual()})
+                  Historial del Día ({obtenerFechaActual()}) - Hora Colombia
                   <span className="historial-contador">
                     {historialAccesos.filter(a => a.tipo === 'entrada').length} entradas, {historialAccesos.filter(a => a.tipo === 'salida').length} salidas
                   </span>
