@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import "./header.css"
+import "./Header.css"
 
-const Header = ({ style }) => {
+const Header = ({ style, logout }) => {
     const [Toggle, showMenu] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
     const [headerClass, setHeaderClass] = useState('');
@@ -30,8 +30,12 @@ const Header = ({ style }) => {
     }, [lastScrollY]);
 
     const handleLogout = () => {
-        // Aquí puedes agregar la lógica para cerrar sesión
-        window.location.href = '/';
+        if (logout) {
+            logout();
+        } else {
+            // Fallback si no se pasa la función logout
+            window.location.href = '/';
+        }
     };
 
     return (
