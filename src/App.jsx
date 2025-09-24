@@ -146,6 +146,29 @@ const App = () => {
     password: "", 
     role: "lector" 
   });
+  
+  // Estado separado para registro de usuarios (completamente independiente del login)
+  const [newUser, setNewUser] = useState({
+    nombre: "", 
+    apellido: "", 
+    fechaNacimiento: "", 
+    idInstitucional: "", 
+    cedula: "", 
+    rolUniversidad: "", 
+    correoPersonal: "", 
+    correoInstitucional: "", 
+    password: "", 
+    role: "",
+    // Campos específicos por rol
+    carrera: "",
+    semestre: "",
+    departamento: "",
+    dependencia: "",
+    area: "",
+    turno: "",
+    numeroEmpleado: ""
+  });
+  
   const [loggedIn, setLoggedIn] = useState(false);
   const [role, setRole] = useState(null);
   const [formData, setFormData] = useState({ 
@@ -1177,6 +1200,29 @@ const App = () => {
       nuevoValor = value;
     }
     
+    completeHandleAuthChange(name, nuevoValor);
+  };
+
+  // Nueva función para manejar el registro de usuarios (completamente separada)
+  const handleNewUserChange = (e) => {
+    const { name, value } = e.target;
+    
+    let nuevoValor = value;
+    
+    // Validación para campos numéricos
+    if (['cedula', 'idInstitucional', 'numeroEmpleado'].includes(name)) {
+      // Solo permite números
+      if (value !== '' && !/^\d+$/.test(value)) {
+        return; // No actualizar si no es válido
+      }
+      nuevoValor = value;
+    }
+    
+    setNewUser(prevNewUser => ({ ...prevNewUser, [name]: nuevoValor }));
+  };
+
+  // Completar handleAuthChange original
+  const completeHandleAuthChange = (name, nuevoValor) => {
     // Actualizar el valor en user
     const nuevoUser = { ...user, [name]: nuevoValor };
     setUser(nuevoUser);
@@ -1191,7 +1237,7 @@ const App = () => {
     }
   };
 
-  // Función para manejar validación cuando el usuario sale del campo en el formulario de usuario
+  // Función para manejar validación cuando el usuario sale del campo en el formulario de usuario (login)
   const handleAuthBlur = (e) => {
     const { name, value } = e.target;
     const error = validarCampoUsuario(name, value, user);
@@ -1201,14 +1247,184 @@ const App = () => {
     }));
   };
 
+  // Función para manejar validación cuando el usuario sale del campo en el formulario de registro de usuarios
+  const handleNewUserBlur = (e) => {
+    const { name, value } = e.target;
+    const error = validarCampoUsuario(name, value, newUser);
+    setErroresUsuario(prev => ({
+      ...prev,
+      [name]: error
+    }));
+  };
+
+  // Función para limpiar completamente los campos de usuario (login)
+  const limpiarCamposUsuario = () => {
+    setUser({ 
+      nombre: "", 
+      apellido: "", 
+      fechaNacimiento: "", 
+      idInstitucional: "", 
+      cedula: "", 
+      rolUniversidad: "", 
+      correoPersonal: "", 
+      correoInstitucional: "", 
+      password: "", 
+      role: "lector" 
+    });
+    setErroresUsuario({});
+    setMostrarErroresUsuario(false);
+  };
+
+  // Función para limpiar completamente los campos de nuevo usuario (registro)
+  const limpiarCamposNewUser = () => {
+    setNewUser({
+      nombre: "", 
+      apellido: "", 
+      fechaNacimiento: "", 
+      idInstitucional: "", 
+      cedula: "", 
+      rolUniversidad: "", 
+      correoPersonal: "", 
+      correoInstitucional: "", 
+      password: "", 
+      role: "",
+      // Campos específicos por rol
+      carrera: "",
+      semestre: "",
+      departamento: "",
+      dependencia: "",
+      area: "",
+      turno: "",
+      numeroEmpleado: ""
+    });
+    setErroresUsuario({});
+    setMostrarErroresUsuario(false);
+  };
+
+  // Función para limpiar completamente los campos de formData
+  const limpiarCamposFormData = () => {
+    setFormData({ 
+      nombre: "", 
+      apellido: "", 
+      fechaNacimiento: "", 
+      idInstitucional: "", 
+      cedula: "", 
+      rolUniversidad: "", 
+      correoPersonal: "", 
+      tieneCorreoInstitucional: "",
+      correoInstitucional: "", 
+      fecha: "", 
+      hora: "", 
+      imagen: null,
+      carnet: "",
+      
+      // Campos dinámicos - Estudiante
+      carrera: "",
+      semestre: "",
+      tipoMatricula: "",
+      programa: "",
+      estadoAcademico: "",
+      promedioAcademico: "",
+      perteneceSemillero: "",
+      nombreSemillero: "",
+      
+      // Campos dinámicos - Profesor
+      departamento: "",
+      categoriaAcademica: "",
+      horarioAtencion: "",
+      facultad: "",
+      tituloAcademico: "",
+      areaInvestigacion: "",
+      proyectosInvestigacion: [],
+      publicaciones: "",
+      
+      // Campos dinámicos - Administrativo
+      dependencia: "",
+      cargo: "",
+      tipoContrato: "",
+      areaResponsabilidad: "",
+      horarioTrabajo: "",
+      nivelAcceso: "",
+      
+      // Campos dinámicos - Seguridad
+      turnoTrabajo: "",
+      zonaAsignada: "",
+      nivelAutorizacion: "",
+      certificacionSeguridad: "",
+      
+      // Campos dinámicos - Otros
+      programaBeca: "",
+      montoApoyo: "",
+      grupoInvestigacion: "",
+      areaServicio: "",
+      tipoServicio: "",
+    });
+    setImagePreview("");
+    setRegistroEditando(null);
+    setErrores({});
+    setMostrarErrores(false);
+  };
+
+  // useEffect para limpiar campos al cargar la aplicación o cambiar de vista
+  useEffect(() => {
+    // Limpiar campos cuando se carga la aplicación
+    const limpiarAlCargar = () => {
+      limpiarCamposUsuario();
+      limpiarCamposNewUser();
+      limpiarCamposFormData();
+    };
+
+    // Limpiar inmediatamente al cargar
+    limpiarAlCargar();
+
+    // Agregar listener para limpiar cuando se recarga la página
+    const handleBeforeUnload = () => {
+      limpiarCamposUsuario();
+      limpiarCamposNewUser();
+      limpiarCamposFormData();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
+  // useEffect para limpiar campos cuando cambia la vista del menú
+  useEffect(() => {
+    if (menu !== "login") {
+      // Solo limpiar campos de usuario cuando no estamos en login
+      // para no interferir con la sesión activa
+      if (!loggedIn) {
+        limpiarCamposUsuario();
+        limpiarCamposNewUser();
+      }
+    }
+    
+    // Siempre limpiar formData cuando cambia la vista
+    limpiarCamposFormData();
+  }, [menu, adminView]);
+
+  // useEffect para limpiar campos cuando se hace logout
+  useEffect(() => {
+    if (!loggedIn) {
+      setTimeout(() => {
+        limpiarCamposUsuario();
+        limpiarCamposNewUser();
+        limpiarCamposFormData();
+      }, 100);
+    }
+  }, [loggedIn]);
+
   const register = async () => {
     if (registerLoading) return; // Prevenir clicks múltiples
     
     // Activar la visualización de errores
     setMostrarErroresUsuario(true);
     
-    // Validar todo el formulario
-    const erroresValidacion = validarFormularioUsuario(user);
+    // Validar todo el formulario usando newUser en lugar de user
+    const erroresValidacion = validarFormularioUsuario(newUser);
     setErroresUsuario(erroresValidacion);
     
     // Si hay errores, no enviar el formulario
@@ -1222,23 +1438,14 @@ const App = () => {
     try {
       toast.info("Registrando usuario...", { autoClose: 1000 });
       
-      await axios.post("https://backend-coral-theta-21.vercel.app/api/register", user, {
+      await axios.post("https://backend-coral-theta-21.vercel.app/api/register", newUser, {
         timeout: 10000 // Timeout de 10 segundos
       });
       
       toast.success("Usuario registrado exitosamente");
-      setUser({ 
-        nombre: "", 
-        apellido: "", 
-        fechaNacimiento: "", 
-        idInstitucional: "", 
-        cedula: "", 
-        rolUniversidad: "", 
-        correoPersonal: "", 
-        correoInstitucional: "", 
-        password: "", 
-        role: "lector" 
-      });
+      
+      // Limpiar campos de registro usando la nueva función
+      limpiarCamposNewUser();
       
       // Limpiar errores del formulario de usuario
       setErroresUsuario({});
@@ -1246,7 +1453,7 @@ const App = () => {
       
       setAdminView("menu");
     } catch (error) {
-      console.error("Error detallado en registro:", error);
+      console.error("Error en registro:", error.response?.data?.error || error.message);
       
       // Manejo específico de diferentes tipos de errores
       if (error.code === 'ECONNABORTED') {
@@ -1254,7 +1461,21 @@ const App = () => {
       } else if (error.response?.status === 500) {
         toast.error("Error del servidor. Por favor intente en unos momentos.");
       } else if (error.response?.status === 400) {
-        toast.error(error.response.data?.error || "Datos inválidos. Verifique la información.");
+        const errorMsg = error.response.data?.error || error.response.data?.message || "Datos inválidos. Verifique la información.";
+        
+        // Hacer el mensaje más específico y útil
+        if (errorMsg.includes("cédula")) {
+          toast.error(`${errorMsg}\n\n💡 Sugerencias:\n• Verifique que la cédula sea correcta\n• Si ya existe un usuario con esta cédula, no puede crear otro\n• Revise la lista de usuarios existentes`);
+        } else if (errorMsg.includes("correo") || errorMsg.includes("email")) {
+          toast.error(`${errorMsg}\n\n💡 Use un correo diferente que no esté registrado`);
+        } else if (errorMsg.includes("ID") || errorMsg.includes("institucional")) {
+          toast.error(`${errorMsg}\n\n💡 Use un ID institucional diferente que no esté registrado`);
+        } else {
+          toast.error(errorMsg);
+        }
+      } else if (error.response?.status === 409) {
+        const errorMsg = error.response.data?.error || error.response.data?.message || "Ya existe un usuario con estos datos";
+        toast.error(errorMsg);
       } else if (error.response?.data?.error) {
         toast.error(error.response.data.error);
       } else if (!navigator.onLine) {
@@ -1344,19 +1565,13 @@ const App = () => {
     setLoggedIn(false);
     setRole(null);
     setAdminView("menu");
-    setUser({ 
-      nombre: "", 
-      apellido: "", 
-      fechaNacimiento: "", 
-      idInstitucional: "", 
-      cedula: "", 
-      rolUniversidad: "", 
-      correoPersonal: "", 
-      correoInstitucional: "", 
-      password: "", 
-      role: "lector" 
-    });
+    
+    // Usar las funciones de limpieza centralizadas
+    limpiarCamposUsuario();
+    limpiarCamposNewUser();
+    limpiarCamposFormData();
     limpiarTodosLosFormularios();
+    
     handleMenuChange("inicio");
   };
 
@@ -2168,7 +2383,10 @@ const App = () => {
             adminView={adminView}
             setAdminView={setAdminView}
             user={user}
+            newUser={newUser}
             handleAuthChange={handleAuthChange}
+            handleNewUserChange={handleNewUserChange}
+            handleNewUserBlur={handleNewUserBlur}
             register={register}
             registerLoading={registerLoading}
             logout={logout}
