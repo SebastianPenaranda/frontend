@@ -1700,14 +1700,26 @@ const App = () => {
 
   const confirmarEliminacion = async () => {
     try {
-      console.log("Iniciando eliminación del registro:", registroAEliminar);
+      // Validar que tenemos un ID válido
+      if (!registroAEliminar || typeof registroAEliminar !== 'string') {
+        toast.error("Error: ID de registro inválido");
+        setMostrarModalConfirmacion(false);
+        return;
+      }
+      
+      // Buscar el registro completo usando el ID
       const registro = huellas.find(h => h._id === registroAEliminar);
-      console.log("Registro a eliminar:", registro);
+
+      if (!registro) {
+        toast.error("No se encontró el registro a eliminar");
+        setMostrarModalConfirmacion(false);
+        return;
+      }
 
       // Primero guardamos el registro que vamos a eliminar
       setRegistroEliminado(registro);
       
-      // Luego eliminamos
+      // Luego eliminamos usando el ID
       await axios.delete(`https://backend-coral-theta-21.vercel.app/api/huellas/${registroAEliminar}`);
       
       toast(
@@ -1756,8 +1768,15 @@ const App = () => {
       fetchHuellas();
       setRegistroDetalle(null); // Volver a la vista general después de eliminar
     } catch (error) {
-      console.error("Error al eliminar:", error);
-      toast.error("Error al eliminar el registro");
+      console.error("Error al eliminar registro:", error.response?.data || error.message);
+      
+      if (error.response?.status === 404) {
+        toast.error("El registro ya no existe o fue eliminado previamente");
+      } else if (error.response?.status === 500) {
+        toast.error("Error del servidor al eliminar el registro");
+      } else {
+        toast.error("Error al eliminar el registro. Intente nuevamente.");
+      }
     } finally {
       setMostrarModalConfirmacion(false);
       setRegistroAEliminar(null);

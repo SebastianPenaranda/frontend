@@ -5,7 +5,10 @@ const PanelAdmin = ({
   adminView, 
   setAdminView, 
   user, 
+  newUser,
   handleAuthChange, 
+  handleNewUserChange,
+  handleNewUserBlur,
   register, 
   logout, 
   fetchHuellas, 
@@ -101,6 +104,31 @@ const PanelAdmin = ({
   mostrarErroresUsuario
 }) => {
   
+  // Manejador local para traducir nombres de campos únicos en registro de usuarios
+  const handleUserRegistrationChange = (e) => {
+    const { name, value } = e.target;
+    let translatedName = name;
+    
+    // Traducir nombres únicos a nombres del estado
+    if (name === 'new_user_personal_email') {
+      translatedName = 'correoPersonal';
+    } else if (name === 'new_user_institutional_email') {
+      translatedName = 'correoInstitucional';
+    } else if (name === 'new_user_password') {
+      translatedName = 'password';
+    }
+    
+    // Crear evento simulado con el nombre correcto
+    const translatedEvent = {
+      target: {
+        name: translatedName,
+        value: value
+      }
+    };
+    
+    handleNewUserChange(translatedEvent);
+  };
+  
   // Función para renderizar mensajes de error
   const renderError = (nombreCampo) => {
     if (errores[nombreCampo] && (mostrarErrores || errores[nombreCampo])) {
@@ -177,6 +205,7 @@ const PanelAdmin = ({
       {adminView === "registrar_usuario" && (
         <div className="panelRegistroCuadro">
           <h1>Registro de Usuario</h1>
+          <form autoComplete="off" method="post">
           <div className="admin-form">
             <div className="form-section">
               <h2>Información Personal</h2>
@@ -185,9 +214,9 @@ const PanelAdmin = ({
                 type="text" 
                 name="nombre" 
                 placeholder="Ingrese el nombre" 
-                value={user.nombre} 
-                onChange={handleAuthChange} 
-                onBlur={handleAuthBlur}
+                value={newUser.nombre} 
+                onChange={handleNewUserChange} 
+                onBlur={handleNewUserBlur}
                 required 
                 style={erroresUsuario.nombre ? { borderColor: '#e74c3c' } : {}}
               />
@@ -197,9 +226,9 @@ const PanelAdmin = ({
                 type="text" 
                 name="apellido" 
                 placeholder="Ingrese el apellido" 
-                value={user.apellido} 
-                onChange={handleAuthChange} 
-                onBlur={handleAuthBlur}
+                value={newUser.apellido} 
+                onChange={handleNewUserChange} 
+                onBlur={handleNewUserBlur}
                 required 
                 style={erroresUsuario.apellido ? { borderColor: '#e74c3c' } : {}}
               />
@@ -208,9 +237,9 @@ const PanelAdmin = ({
               <input 
                 type="date" 
                 name="fechaNacimiento" 
-                value={user.fechaNacimiento} 
-                onChange={handleAuthChange} 
-                onBlur={handleAuthBlur}
+                value={newUser.fechaNacimiento} 
+                onChange={handleNewUserChange} 
+                onBlur={handleNewUserBlur}
                 required 
                 style={erroresUsuario.fechaNacimiento ? { borderColor: '#e74c3c' } : {}}
               />
@@ -220,9 +249,9 @@ const PanelAdmin = ({
                 type="text" 
                 name="idInstitucional" 
                 placeholder="Ingrese el ID institucional" 
-                value={user.idInstitucional} 
-                onChange={handleAuthChange} 
-                onBlur={handleAuthBlur}
+                value={newUser.idInstitucional} 
+                onChange={handleNewUserChange} 
+                onBlur={handleNewUserBlur}
                 pattern="\\d*" 
                 inputMode="numeric" 
                 required 
@@ -234,9 +263,9 @@ const PanelAdmin = ({
                 type="text" 
                 name="cedula" 
                 placeholder="Ingrese el número de cédula" 
-                value={user.cedula} 
-                onChange={handleAuthChange} 
-                onBlur={handleAuthBlur}
+                value={newUser.cedula} 
+                onChange={handleNewUserChange} 
+                onBlur={handleNewUserBlur}
                 pattern="\\d*" 
                 inputMode="numeric" 
                 required 
@@ -246,9 +275,9 @@ const PanelAdmin = ({
               <label>Rol en la Universidad:</label>
               <select 
                 name="rolUniversidad" 
-                value={user.rolUniversidad} 
-                onChange={handleAuthChange} 
-                onBlur={handleAuthBlur}
+                value={newUser.rolUniversidad} 
+                onChange={handleNewUserChange} 
+                onBlur={handleNewUserBlur}
                 required
                 style={erroresUsuario.rolUniversidad ? { borderColor: '#e74c3c' } : {}}
               >
@@ -258,54 +287,70 @@ const PanelAdmin = ({
                 ))}
               </select>
               {renderErrorUsuario('rolUniversidad')}
+              {/* Campos falsos ocultos para prevenir autocompletado */}
+              <input type="text" style={{display: 'none'}} name="prevent_autofill_email" />
+              <input type="password" style={{display: 'none'}} name="prevent_autofill_pass" />
+              
               <label>Correo Personal:</label>
               <input 
                 type="email" 
-                name="correoPersonal" 
+                name="new_user_personal_email" 
                 placeholder="Ingrese el correo personal" 
-                value={user.correoPersonal} 
-                onChange={handleAuthChange} 
-                onBlur={handleAuthBlur}
+                value={newUser.correoPersonal} 
+                onChange={handleUserRegistrationChange} 
+                onBlur={handleNewUserBlur}
                 required 
                 style={erroresUsuario.correoPersonal ? { borderColor: '#e74c3c' } : {}}
-                autoComplete="email"
-                data-form-type="user-registration"
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
+                data-form-type="new-user-registration"
+                data-registration="true"
               />
               {renderErrorUsuario('correoPersonal')}
               <label>Correo Institucional:</label>
               <input 
                 type="email" 
-                name="correoInstitucional" 
+                name="new_user_institutional_email" 
                 placeholder="Ingrese el correo institucional" 
-                value={user.correoInstitucional} 
-                onChange={handleAuthChange} 
-                onBlur={handleAuthBlur}
+                value={newUser.correoInstitucional} 
+                onChange={handleUserRegistrationChange} 
+                onBlur={handleNewUserBlur}
                 required 
                 style={erroresUsuario.correoInstitucional ? { borderColor: '#e74c3c' } : {}}
-                autoComplete="work-email"
-                data-form-type="user-registration"
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
+                data-form-type="new-user-registration"
+                data-registration="true"
               />
               {renderErrorUsuario('correoInstitucional')}
               <label>Contraseña:</label>
               <input 
                 type="password" 
-                name="password" 
+                name="new_user_password" 
                 placeholder="Ingrese la contraseña" 
-                value={user.password} 
-                onChange={handleAuthChange} 
-                onBlur={handleAuthBlur}
+                value={newUser.password} 
+                onChange={handleUserRegistrationChange} 
+                onBlur={handleNewUserBlur}
                 required 
                 style={erroresUsuario.password ? { borderColor: '#e74c3c' } : {}}
-                autoComplete="new-password"
-                data-form-type="user-registration"
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
+                data-form-type="new-user-registration"
+                data-registration="true"
               />
               {renderErrorUsuario('password')}
               <label>Rol en la Aplicación:</label>
               <select 
                 name="role" 
-                value={user.role} 
-                onChange={handleAuthChange} 
-                onBlur={handleAuthBlur}
+                value={newUser.role} 
+                onChange={handleNewUserChange} 
+                onBlur={handleNewUserBlur}
                 required
                 style={erroresUsuario.role ? { borderColor: '#e74c3c' } : {}}
               >
@@ -316,14 +361,14 @@ const PanelAdmin = ({
               {renderErrorUsuario('role')}
 
               {/* Campos específicos según el rol */}
-              {user.rolUniversidad === 'Profesor / Docente' && (
+              {newUser.rolUniversidad === 'Profesor / Docente' && (
                 <>
                   <label>Departamento / Facultad:</label>
                   <select 
                     name="departamento" 
-                    value={user.departamento} 
-                    onChange={handleAuthChange} 
-                    onBlur={handleAuthBlur}
+                    value={newUser.departamento} 
+                    onChange={handleNewUserChange} 
+                    onBlur={handleNewUserBlur}
                     required
                     style={erroresUsuario.departamento ? { borderColor: '#e74c3c' } : {}}
                   >
@@ -336,9 +381,9 @@ const PanelAdmin = ({
                   <label>Categoría Académica:</label>
                   <select 
                     name="categoriaAcademica" 
-                    value={user.categoriaAcademica} 
-                    onChange={handleAuthChange} 
-                    onBlur={handleAuthBlur}
+                    value={newUser.categoriaAcademica} 
+                    onChange={handleNewUserChange} 
+                    onBlur={handleNewUserBlur}
                     required
                     style={erroresUsuario.categoriaAcademica ? { borderColor: '#e74c3c' } : {}}
                   >
@@ -351,9 +396,9 @@ const PanelAdmin = ({
                   <label>Horario de Atención:</label>
                   <select 
                     name="horarioAtencion" 
-                    value={user.horarioAtencion} 
-                    onChange={handleAuthChange} 
-                    onBlur={handleAuthBlur}
+                    value={newUser.horarioAtencion} 
+                    onChange={handleNewUserChange} 
+                    onBlur={handleNewUserBlur}
                     required
                     style={erroresUsuario.horarioAtencion ? { borderColor: '#e74c3c' } : {}}
                   >
@@ -371,9 +416,9 @@ const PanelAdmin = ({
                   <label>Dependencia:</label>
                   <select 
                     name="dependencia" 
-                    value={user.dependencia} 
-                    onChange={handleAuthChange} 
-                    onBlur={handleAuthBlur}
+                    value={newUser.dependencia} 
+                    onChange={handleNewUserChange} 
+                    onBlur={handleNewUserBlur}
                     required
                     style={erroresUsuario.dependencia ? { borderColor: '#e74c3c' } : {}}
                   >
@@ -388,9 +433,9 @@ const PanelAdmin = ({
                     type="text" 
                     name="cargo" 
                     placeholder="Ingrese el cargo" 
-                    value={user.cargo} 
-                    onChange={handleAuthChange} 
-                    onBlur={handleAuthBlur}
+                    value={newUser.cargo} 
+                    onChange={handleNewUserChange} 
+                    onBlur={handleNewUserBlur}
                     required 
                     style={erroresUsuario.cargo ? { borderColor: '#e74c3c' } : {}}
                   />
@@ -400,9 +445,9 @@ const PanelAdmin = ({
                     type="text" 
                     name="telefonoInterno" 
                     placeholder="Ingrese el teléfono interno" 
-                    value={user.telefonoInterno} 
-                    onChange={handleAuthChange} 
-                    onBlur={handleAuthBlur}
+                    value={newUser.telefonoInterno} 
+                    onChange={handleNewUserChange} 
+                    onBlur={handleNewUserBlur}
                     pattern="\\d*" 
                     inputMode="numeric" 
                     required 
@@ -412,9 +457,9 @@ const PanelAdmin = ({
                   <label>Turno Laboral:</label>
                   <select 
                     name="turnoLaboral" 
-                    value={user.turnoLaboral} 
-                    onChange={handleAuthChange} 
-                    onBlur={handleAuthBlur}
+                    value={newUser.turnoLaboral} 
+                    onChange={handleNewUserChange} 
+                    onBlur={handleNewUserBlur}
                     required
                     style={erroresUsuario.turnoLaboral ? { borderColor: '#e74c3c' } : {}}
                   >
@@ -432,9 +477,9 @@ const PanelAdmin = ({
                   <label>Área:</label>
                   <select 
                     name="area" 
-                    value={user.area} 
-                    onChange={handleAuthChange} 
-                    onBlur={handleAuthBlur}
+                    value={newUser.area} 
+                    onChange={handleNewUserChange} 
+                    onBlur={handleNewUserBlur}
                     required
                     style={erroresUsuario.area ? { borderColor: '#e74c3c' } : {}}
                   >
@@ -448,9 +493,9 @@ const PanelAdmin = ({
                   <label>Turno:</label>
                   <select 
                     name="turno" 
-                    value={user.turno} 
-                    onChange={handleAuthChange} 
-                    onBlur={handleAuthBlur}
+                    value={newUser.turno} 
+                    onChange={handleNewUserChange} 
+                    onBlur={handleNewUserBlur}
                     required
                     style={erroresUsuario.turno ? { borderColor: '#e74c3c' } : {}}
                   >
@@ -465,9 +510,9 @@ const PanelAdmin = ({
                     type="text" 
                     name="numeroEmpleado" 
                     placeholder="Ingrese el número de empleado" 
-                    value={user.numeroEmpleado} 
-                    onChange={handleAuthChange} 
-                    onBlur={handleAuthBlur}
+                    value={newUser.numeroEmpleado} 
+                    onChange={handleNewUserChange} 
+                    onBlur={handleNewUserBlur}
                     pattern="\\d*" 
                     inputMode="numeric" 
                     required 
@@ -487,6 +532,7 @@ const PanelAdmin = ({
               </button>
             </div>
           </div>
+          </form>
         </div>
       )}
 
@@ -1225,7 +1271,7 @@ const PanelAdmin = ({
                       <span>✏️</span> Editar
                     </button>
                     <button
-                      onClick={() => handleDelete(registro)}
+                      onClick={() => handleDelete(registro._id)}
                       className="btn-card btn-eliminar"
                     >
                       <span>🗑️</span> Eliminar
