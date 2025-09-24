@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
+=======
+import React, { useState } from 'react';
+>>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -172,8 +176,11 @@ const LoginManager = ({
           value={user.correoInstitucional} 
           onChange={onAuthChange}
           disabled={loginLoading}
+<<<<<<< HEAD
           autoComplete="username"
           data-form-type="login"
+=======
+>>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
         />
         
         <label>Contraseña:</label>
@@ -184,8 +191,11 @@ const LoginManager = ({
           value={user.password} 
           onChange={onAuthChange}
           disabled={loginLoading}
+<<<<<<< HEAD
           autoComplete="current-password"
           data-form-type="login"
+=======
+>>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
         />
         
         <label>Rol en la Aplicación:</label>
@@ -247,10 +257,13 @@ const LoginManager = ({
                     value={forgotPasswordEmail}
                     onChange={(e) => setForgotPasswordEmail(e.target.value)}
                     disabled={isSendingEmail}
+<<<<<<< HEAD
                     autoComplete="off"
                     autoCorrect="off"
                     autoCapitalize="off"
                     spellCheck="false"
+=======
+>>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
                   />
                   <div className="modal-buttons">
                     <button 

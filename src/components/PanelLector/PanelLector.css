@@ -348,6 +348,7 @@
 .rol-colaborador-externo { background: #6c757d; } /* Gris */
 .rol-personal-de-servicios { background: #ffc107; color: #212529; } /* Amarillo */
 .rol-becario-pasante { background: #17a2b8; } /* Celeste */
+<<<<<<< HEAD
 .rol-visitante { background: #dc3545; } /* Rojo para visitantes */
 
 /* Estilo especial para razón de visita */
@@ -359,6 +360,8 @@
   border-radius: 4px;
   border-left: 3px solid #dc3545;
 }
+=======
+>>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
 
 /* ================= LOADING SPINNER =================== */
 .lector-loading-spinner {
@@ -399,6 +402,7 @@
   cursor: not-allowed;
   opacity: 0.6;
 }
+<<<<<<< HEAD
 
 /* ================= HISTORIAL DE ACCESOS =================== */
 .historial-accesos {
@@ -516,3 +520,5 @@
 .historial-lista::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+=======
+>>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
