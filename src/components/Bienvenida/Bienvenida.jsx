@@ -1,4 +1,3 @@
-
 import './Bienvenida.css';
 
 const Bienvenida = ({ onMenuChange }) => {
