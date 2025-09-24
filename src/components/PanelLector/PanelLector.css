@@ -348,6 +348,20 @@
 .rol-colaborador-externo { background: #6c757d; } /* Gris */
 .rol-personal-de-servicios { background: #ffc107; color: #212529; } /* Amarillo */
 .rol-becario-pasante { background: #17a2b8; } /* Celeste */
+<<<<<<< HEAD
+.rol-visitante { background: #dc3545; } /* Rojo para visitantes */
+
+/* Estilo especial para razón de visita */
+.razon-visita {
+  font-style: italic;
+  color: #6c757d;
+  background: #f8f9fa;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border-left: 3px solid #dc3545;
+}
+=======
+>>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
 
 /* ================= LOADING SPINNER =================== */
 .lector-loading-spinner {
@@ -388,3 +402,123 @@
   cursor: not-allowed;
   opacity: 0.6;
 }
+<<<<<<< HEAD
+
+/* ================= HISTORIAL DE ACCESOS =================== */
+.historial-accesos {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.historial-titulo {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #2c3e50;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.historial-contador {
+  font-size: 12px;
+  font-weight: 400;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.historial-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 250px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.historial-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.historial-item:hover {
+  transform: translateX(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.historial-entrada {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
+}
+
+.historial-salida {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+
+.historial-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.historial-tipo {
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.historial-tiempo {
+  font-size: 11px;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+.historial-numero {
+  font-size: 10px;
+  font-weight: 600;
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.historial-vacio {
+  padding: 20px;
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  font-size: 14px;
+}
+
+/* Scrollbar personalizado para el historial */
+.historial-lista::-webkit-scrollbar {
+  width: 6px;
+}
+
+.historial-lista::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.historial-lista::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.historial-lista::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+=======
+>>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1

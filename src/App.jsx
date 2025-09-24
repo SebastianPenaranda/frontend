@@ -1294,6 +1294,26 @@ const App = () => {
         toast.success(`Sesión iniciada como ${response.data.role}`);
         if (response.data.role === 'admin') {
           setAdminView('menu');
+          
+          // Limpiar campos del formulario de registro para evitar autocompletado cruzado
+          setTimeout(() => {
+            setUser({
+              ...user,
+              // Mantener solo los campos de login
+              correoInstitucional: user.correoInstitucional,
+              password: user.password,
+              role: user.role,
+              // Limpiar campos de registro
+              nombre: "",
+              apellido: "",
+              fechaNacimiento: "",
+              idInstitucional: "",
+              cedula: "",
+              rolUniversidad: "",
+              correoPersonal: "",
+              // Mantener campos de login intactos para la sesión
+            });
+          }, 100);
         }
       }
     } catch (error) {

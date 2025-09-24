@@ -268,6 +268,11 @@ const PanelAdmin = ({
                 onBlur={handleAuthBlur}
                 required 
                 style={erroresUsuario.correoPersonal ? { borderColor: '#e74c3c' } : {}}
+<<<<<<< HEAD
+                autoComplete="email"
+                data-form-type="user-registration"
+=======
+>>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
               />
               {renderErrorUsuario('correoPersonal')}
               <label>Correo Institucional:</label>
@@ -280,6 +285,11 @@ const PanelAdmin = ({
                 onBlur={handleAuthBlur}
                 required 
                 style={erroresUsuario.correoInstitucional ? { borderColor: '#e74c3c' } : {}}
+<<<<<<< HEAD
+                autoComplete="work-email"
+                data-form-type="user-registration"
+=======
+>>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
               />
               {renderErrorUsuario('correoInstitucional')}
               <label>Contraseña:</label>
@@ -292,6 +302,11 @@ const PanelAdmin = ({
                 onBlur={handleAuthBlur}
                 required 
                 style={erroresUsuario.password ? { borderColor: '#e74c3c' } : {}}
+<<<<<<< HEAD
+                autoComplete="new-password"
+                data-form-type="user-registration"
+=======
+>>>>>>> 42be63683b4a48f9200536eaf767bb48b9b04df1
               />
               {renderErrorUsuario('password')}
               <label>Rol en la Aplicación:</label>

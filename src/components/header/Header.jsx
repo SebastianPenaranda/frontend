@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import "./header.css"
+import "./Header.css"
 
 const Header = ({ style, logout }) => {
     const [Toggle, showMenu] = useState(false);
